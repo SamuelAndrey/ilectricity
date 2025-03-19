@@ -22,13 +22,11 @@ struct DeviceDetailView: View {
     @State private var usageUnit: UsageUnit
     @State private var showSuccessAlert = false
     
-    // State untuk fitur koreksi pemakaian
     @State private var isShowingCorrectionSheet = false
     @State private var correctionDate = Date()
     @State private var correctionValue = ""
-    @State private var isExcess = false // Default kekurangan
-    
-    // State untuk menyimpan koreksi dari database
+    @State private var correctionUnit: UsageUnit = .hours
+    @State private var isExcess: Bool = false
     @State private var corrections: [UsageCorrection] = []
     
     @FocusState private var focusedField: FocusField?
@@ -95,7 +93,7 @@ struct DeviceDetailView: View {
                         .focused($focusedField, equals: .frequency)
                         .multilineTextAlignment(.trailing)
                         .keyboardType(.numberPad)
-                    Text("hari/bulan")
+                    Text("hari per bulan")
                 }
             }
             
@@ -110,8 +108,7 @@ struct DeviceDetailView: View {
             }
             .listRowBackground(Color.green)
             
-            
-            // Section untuk koreksi pemakaian harian
+            /// Section untuk koreksi pemakaian harian
             Section(header:
                 HStack {
                     Text("Koreksi Pemakaian Harian")
@@ -132,23 +129,24 @@ struct DeviceDetailView: View {
                         HStack {
                             VStack(alignment: .leading) {
                                 Text(formattedDate(correction.date))
-                                    .font(.subheadline)
+                                    .font(.headline)
                                 Text(correction.isExcess ? "Kelebihan" : "Kekurangan")
-                                    .font(.caption)
-                                    .foregroundStyle(correction.isExcess ? .green : .red)
+                                    .font(.subheadline)
+                                    .foregroundStyle(correction.isExcess ? .red : .green)
                             }
                             
                             Spacer()
                             
-                            Text("\(correction.correction, specifier: "%.2f") jam")
+                            Text("\(correction.correction, specifier: "%.0f") \(correction.usageUnit == .hours ? "jam" : "menit")")
                                 .font(.headline)
-                                .foregroundStyle(correction.isExcess ? .green : .red)
+                                .foregroundStyle(correction.isExcess ? .red : .green)
+
+
                         }
                     }
                     .onDelete(perform: deleteCorrection)
                 }
             }
-            
             
             Section(header:
                 HStack {
@@ -194,7 +192,6 @@ struct DeviceDetailView: View {
                 }
             }
             
-            // Tombol untuk menambahkan koreksi pemakaian
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: {
                     isShowingCorrectionSheet.toggle()
@@ -204,7 +201,8 @@ struct DeviceDetailView: View {
                 }
             }
         }
-        // Sheet untuk menambahkan koreksi pemakaian
+        
+        /// Sheet untuk menambahkan koreksi pemakaian
         .sheet(isPresented: $isShowingCorrectionSheet) {
             NavigationView {
                 Form {
@@ -212,20 +210,21 @@ struct DeviceDetailView: View {
                         DatePicker("Tanggal", selection: $correctionDate, displayedComponents: .date)
                         
                         HStack {
-                            Text("Nilai Koreksi")
+                            Text("Lama Pakai")
                             Spacer()
-                            TextField("0", text: $correctionValue)
+                            TextField("Lama", text: $correctionValue)
                                 .focused($focusedField, equals: .correction)
                                 .multilineTextAlignment(.trailing)
                                 .keyboardType(.decimalPad)
-                            Text("jam")
+                            
+                            Picker("", selection: $correctionUnit) {
+                                Text("Jam").tag(UsageUnit.hours)
+                                Text("Menit").tag(UsageUnit.minutes)
+                            }
+                            .pickerStyle(MenuPickerStyle())
+                            .frame(width: 80)
                         }
-                        
-                        Picker("Jenis Koreksi", selection: $isExcess) {
-                            Text("Kekurangan").tag(false)
-                            Text("Kelebihan").tag(true)
-                        }
-                        .pickerStyle(SegmentedPickerStyle())
+
                     }
                 }
                 .navigationTitle("Tambah Koreksi")
@@ -254,9 +253,13 @@ struct DeviceDetailView: View {
             }
         }
         .onAppear {
-            // Ambil data koreksi dari database
             loadCorrections()
         }
+        .gesture(
+            TapGesture().onEnded {
+                focusedField = nil
+            }
+        )
     }
     
     private func loadCorrections() {
@@ -285,8 +288,7 @@ struct DeviceDetailView: View {
         viewModel.deleteDevice(device)
         dismiss()
     }
-    
-    // Fungsi untuk memformat tanggal
+
     private func formattedDate(_ date: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
@@ -295,21 +297,34 @@ struct DeviceDetailView: View {
         return formatter.string(from: date)
     }
     
-    // Fungsi untuk menambahkan koreksi baru
+
     private func addCorrection() {
         if let value = Double(correctionValue), value > 0 {
-            // Tambahkan koreksi baru melalui view model
-            viewModel.addCorrection(to: device, date: correctionDate, correction: value, isExcess: isExcess)
+            // Tentukan apakah koreksi adalah kelebihan atau kekurangan berdasarkan unit
+            let calculatedExcess: Bool
+            if correctionUnit == .hours {
+                calculatedExcess = Double(usageDuration)! < value
+            } else {
+                let durationInMinutes = Int(usageDuration)! * 60
+                calculatedExcess = Double(durationInMinutes) < value
+            }
             
-            // Reset nilai input
+            // Memastikan isExcess terupdate dengan nilai yang dihitung
+            self.isExcess = calculatedExcess
+            
+            // Tambahkan koreksi baru melalui view model, sertakan usageUnit
+            viewModel.addCorrection(to: device, date: correctionDate, correction: value, isExcess: self.isExcess, usageUnit: correctionUnit)
+            
+            // Reset nilai input setelah penambahan koreksi
             correctionValue = ""
             correctionDate = Date()
-            isExcess = false
+            isExcess = false  // Mengatur kembali ke default setelah input
             
             // Refresh data koreksi
             loadCorrections()
         }
     }
+
     
     // Fungsi untuk menghapus koreksi
     private func deleteCorrection(at offsets: IndexSet) {
@@ -317,6 +332,8 @@ struct DeviceDetailView: View {
         loadCorrections()
     }
 }
+
+
 
 #Preview {
     do {
@@ -331,11 +348,11 @@ struct DeviceDetailView: View {
             frequencyPerMonth: 30,
             usageUnit: .hours
         )
+        
         context.insert(sampleDevice)
         
-        // Tambahkan beberapa koreksi contoh
-        let correction1 = UsageCorrection(date: Calendar.current.date(byAdding: .day, value: -2, to: Date())!, correction: 1.5, isExcess: true)
-        let correction2 = UsageCorrection(date: Calendar.current.date(byAdding: .day, value: -5, to: Date())!, correction: 0.75, isExcess: false)
+        let correction1 = UsageCorrection(date: Calendar.current.date(byAdding: .day, value: -2, to: Date())!, correction: 1.5, isExcess: true, usageUnit: .hours)
+        let correction2 = UsageCorrection(date: Calendar.current.date(byAdding: .day, value: -5, to: Date())!, correction: 0.75, isExcess: false, usageUnit: .hours)
         
         if sampleDevice.corrections == nil {
             sampleDevice.corrections = []

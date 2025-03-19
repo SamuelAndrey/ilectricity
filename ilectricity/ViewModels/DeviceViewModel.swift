@@ -54,20 +54,18 @@ final class DeviceViewModel: ObservableObject {
         return device.corrections ?? []
     }
     
-    func addCorrection(to device: Device, date: Date, correction: Double, isExcess: Bool) {
-        let newCorrection = UsageCorrection(date: date, correction: correction, isExcess: isExcess)
+    func addCorrection(to device: Device, date: Date, correction: Double, isExcess: Bool, usageUnit: UsageUnit) {
+        let newCorrection = UsageCorrection(date: date, correction: correction, isExcess: isExcess, usageUnit: usageUnit)
         
-        // Inisialisasi array jika belum ada
         if device.corrections == nil {
             device.corrections = []
         }
         
-        // Tambahkan koreksi baru
         device.corrections?.append(newCorrection)
         
-        // Simpan perubahan
         saveChanges()
     }
+
     
     func deleteCorrection(_ correction: UsageCorrection, from device: Device) {
         device.corrections?.removeAll(where: { $0.id == correction.id })
@@ -85,7 +83,6 @@ final class DeviceViewModel: ObservableObject {
             }
         }
         
-        // Refresh the corrections array
         device.corrections?.remove(atOffsets: offsets)
         saveChanges()
     }

@@ -8,20 +8,20 @@
 import Foundation
 import SwiftData
 
-// Model untuk koreksi pemakaian
 @Model
 final class UsageCorrection {
     var date: Date
     var correction: Double
     var isExcess: Bool // true = kelebihan, false = kekurangan
-    
-    // Relasi ke perangkat
+    var usageUnit: UsageUnit
+
     @Relationship(inverse: \Device.corrections)
     var device: Device?
-    
-    init(date: Date, correction: Double, isExcess: Bool) {
+
+    init(date: Date, correction: Double, isExcess: Bool, usageUnit: UsageUnit) {
         self.date = date
         self.correction = correction
         self.isExcess = isExcess
+        self.usageUnit = usageUnit
     }
 }

@@ -63,7 +63,7 @@ struct AddDeviceView: View {
                         TextField("Frekuensi", value: $frequencyPerMonth, format: .number)
                             .multilineTextAlignment(.trailing)
                             .keyboardType(.numberPad)
-                        Text("Kali per bulan")
+                        Text("hari per bulan")
                     }
                 }
             }
