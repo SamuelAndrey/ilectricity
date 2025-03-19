@@ -13,6 +13,7 @@ struct ilectricityApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             Device.self,
+            UsageCorrection.self,
         ])
         
         do {

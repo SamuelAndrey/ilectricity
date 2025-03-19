@@ -17,6 +17,9 @@ final class Device {
     var frequencyPerMonth: Int
     var usageUnit: UsageUnit
     
+    @Relationship(deleteRule: .cascade)
+        var corrections: [UsageCorrection]?
+    
     init(name: String, powerConsumption: Int, usageDuration: Int, frequencyPerMonth: Int, usageUnit: UsageUnit) {
         self.id = UUID()
         self.name = name

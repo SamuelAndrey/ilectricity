@@ -47,4 +47,46 @@ final class DeviceViewModel: ObservableObject {
             print("Failed to save changes: \(error)")
         }
     }
+    
+    // MARK: - UsageCorrection Methods
+    
+    func fetchCorrections(for device: Device) -> [UsageCorrection] {
+        return device.corrections ?? []
+    }
+    
+    func addCorrection(to device: Device, date: Date, correction: Double, isExcess: Bool) {
+        let newCorrection = UsageCorrection(date: date, correction: correction, isExcess: isExcess)
+        
+        // Inisialisasi array jika belum ada
+        if device.corrections == nil {
+            device.corrections = []
+        }
+        
+        // Tambahkan koreksi baru
+        device.corrections?.append(newCorrection)
+        
+        // Simpan perubahan
+        saveChanges()
+    }
+    
+    func deleteCorrection(_ correction: UsageCorrection, from device: Device) {
+        device.corrections?.removeAll(where: { $0.id == correction.id })
+        modelContext.delete(correction)
+        saveChanges()
+    }
+    
+    func deleteCorrection(at offsets: IndexSet, from device: Device) {
+        guard let corrections = device.corrections else { return }
+        
+        for index in offsets {
+            if index < corrections.count {
+                let correction = corrections[index]
+                modelContext.delete(correction)
+            }
+        }
+        
+        // Refresh the corrections array
+        device.corrections?.remove(atOffsets: offsets)
+        saveChanges()
+    }
 }
