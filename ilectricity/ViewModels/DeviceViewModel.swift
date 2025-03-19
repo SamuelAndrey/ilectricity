@@ -42,7 +42,7 @@ final class DeviceViewModel: ObservableObject {
     func saveChanges() {
         do {
             try modelContext.save()
-            fetchDevices() // Memperbarui daftar setelah perubahan
+            fetchDevices()
         } catch {
             print("Failed to save changes: \(error)")
         }

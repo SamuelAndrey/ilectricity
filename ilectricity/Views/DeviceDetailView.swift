@@ -174,8 +174,6 @@ struct DeviceDetailView: View {
 }
 
 
-
-// Preview
 #Preview {
     do {
         let config = ModelConfiguration(isStoredInMemoryOnly: true)

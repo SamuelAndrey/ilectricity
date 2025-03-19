@@ -34,10 +34,10 @@ struct MainView: View {
                 
                 VStack {
                     List {
-                        // Report estimation section.
+                        /// Report estimation section.
                         Section {
                             NavigationLink {
-                                // Detail view jika diperlukan
+                               
                             } label: {
                                 VStack (alignment: .leading) {
                                     HStack {
@@ -77,9 +77,9 @@ struct MainView: View {
                                 
                                 Spacer()
                             }
-                        } // End report estimation section.
+                        }
                         
-                        // List device section.
+                        /// List device section.
                         Section(header:
                                     HStack {
                             Text("Perangkat")
@@ -105,9 +105,9 @@ struct MainView: View {
                                 }
                             }
                             .onDelete(perform: deleteDevices)
-                        } // End device section
+                        }
                     }
-                    .scrollContentBackground(.hidden) // Penting: Membuat background List transparan
+                    .scrollContentBackground(.hidden)
                     .navigationTitle("Estimasi")
                     .toolbar {
                         ToolbarItem {
@@ -119,7 +119,7 @@ struct MainView: View {
                             }
                         }
                     }
-                } // End Main VStack
+                } /// End Main VStack
                 .sheet(isPresented: $isShowingAddDeviceSheet) {
                     AddDeviceView(isPresented: $isShowingAddDeviceSheet)
                 }
@@ -136,7 +136,6 @@ struct MainView: View {
     }
 }
 
-// Perbaikan pada kode preview
 #Preview {
     do {
         let config = ModelConfiguration(isStoredInMemoryOnly: true)
@@ -144,7 +143,6 @@ struct MainView: View {
         let context = container.mainContext
         let viewModel = DeviceViewModel(modelContext: context)
         
-        // Menambahkan beberapa data sample
         viewModel.addDevice(name: "AC Kamar", powerConsumption: 789, usageDuration: 5, frequencyPerMonth: 30, usageUnit: .hours)
         
         return MainView()

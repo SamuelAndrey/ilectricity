@@ -27,7 +27,6 @@ struct AddDeviceView: View {
     
     var body: some View {
         
-        // Konten utama
         NavigationView {
             Form {
                 Section(header: Text("Detail Perangkat")) {
@@ -98,14 +97,11 @@ struct AddDeviceView: View {
                     }
                 }
             }
-            
-            // Menambahkan padding di atas untuk memberikan ruang bagi indikator
+        
             .padding(.top, 8)
             
         }
-        // Menambahkan presentationDetents untuk mengontrol ketinggian sheet (opsional)
         .presentationDetents([.large, .large])
-        // Menambahkan presentationDragIndicator untuk memastikan indikator drag default tidak muncul
         .presentationDragIndicator(.visible)
     }
 }
