@@ -26,44 +26,49 @@ struct AddDeviceView: View {
     }
     
     var body: some View {
-        
         NavigationView {
-            Form {
-                Section(header: Text("Detail Perangkat")) {
-                    TextField("Nama Perangkat", text: $name)
-                        .focused($isNameFieldFocused)
-                    
-                    HStack {
-                        Text("Daya")
-                        Spacer()
-                        TextField("Daya", value: $powerConsumption, format: .number)
-                            .multilineTextAlignment(.trailing)
-                            .keyboardType(.decimalPad)
-                        Text("W")
-                    }
-                    
-                    HStack {
-                        Text("Lama Pakai")
-                        Spacer()
-                        TextField("Lama", value: $usageDuration, format: .number)
-                            .multilineTextAlignment(.trailing)
-                            .keyboardType(.decimalPad)
+            ZStack {
+                Form {
+                    Section(header: Text("Detail Perangkat")) {
+                        TextField("Nama Perangkat", text: $name)
+                            .focused($isNameFieldFocused)
+                            .focused($focusedField, equals: .name)
                         
-                        Picker("", selection: $usageUnit) {
-                            Text("Jam").tag(UsageUnit.hours)
-                            Text("Menit").tag(UsageUnit.minutes)
+                        HStack {
+                            Text("Daya")
+                            Spacer()
+                            TextField("Daya", value: $powerConsumption, format: .number)
+                                .multilineTextAlignment(.trailing)
+                                .keyboardType(.numberPad)
+                                .focused($focusedField, equals: .power)
+                            Text("W")
                         }
-                        .pickerStyle(MenuPickerStyle())
-                        .frame(width: 80)
-                    }
-                    
-                    HStack {
-                        Text("Frekuensi")
-                        Spacer()
-                        TextField("Frekuensi", value: $frequencyPerMonth, format: .number)
-                            .multilineTextAlignment(.trailing)
-                            .keyboardType(.numberPad)
-                        Text("hari per bulan")
+                        
+                        HStack {
+                            Text("Lama Pakai")
+                            Spacer()
+                            TextField("Lama", value: $usageDuration, format: .number)
+                                .multilineTextAlignment(.trailing)
+                                .keyboardType(.numberPad)
+                                .focused($focusedField, equals: .duration)
+                            
+                            Picker("", selection: $usageUnit) {
+                                Text("Jam").tag(UsageUnit.hours)
+                                Text("Menit").tag(UsageUnit.minutes)
+                            }
+                            .pickerStyle(MenuPickerStyle())
+                            .frame(width: 80)
+                        }
+                        
+                        HStack {
+                            Text("Frekuensi")
+                            Spacer()
+                            TextField("Frekuensi", value: $frequencyPerMonth, format: .number)
+                                .multilineTextAlignment(.trailing)
+                                .keyboardType(.numberPad)
+                                .focused($focusedField, equals: .frequency)
+                            Text("hari per bulan")
+                        }
                     }
                 }
             }
@@ -94,12 +99,22 @@ struct AddDeviceView: View {
                 ToolbarItem(placement: .keyboard) {
                     Button("Done") {
                         focusedField = nil
+                        isNameFieldFocused = false
                     }
                 }
             }
-        
+            .scrollDismissesKeyboard(.interactively)
+            // Add swipe down gesture to dismiss keyboard
+            .gesture(
+                DragGesture(minimumDistance: 10, coordinateSpace: .local)
+                    .onEnded { value in
+                        if value.translation.height > 0 { // Swipe down
+                            focusedField = nil
+                            isNameFieldFocused = false
+                        }
+                    }
+            )
             .padding(.top, 8)
-            
         }
         .presentationDetents([.large, .large])
         .presentationDragIndicator(.visible)

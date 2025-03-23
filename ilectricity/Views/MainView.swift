@@ -21,10 +21,10 @@ struct MainView: View {
                 LinearGradient(
                     gradient: Gradient(
                         colors: [
-                            Color.green.opacity(0.4),
-                            Color.green.opacity(0.1),
-                            Color.green.opacity(0.0),
-                            Color.green.opacity(0.0)
+                            Color.cyan.opacity(0.5),
+                            Color.cyan.opacity(0.2),
+                            Color.teal.opacity(0.0),
+                            Color.teal.opacity(0.0)
                         ]
                     ),
                     startPoint: .top,
@@ -37,18 +37,18 @@ struct MainView: View {
                         /// Report estimation section.
                         Section {
                             NavigationLink {
-                               
+                                
                             } label: {
                                 VStack (alignment: .leading) {
                                     HStack {
                                         Image(systemName: "creditcard.fill")
-                                            .foregroundStyle(.red)
-                                        Text("Estimasi bulanan").bold()
+                                            .foregroundStyle(.cyan)
+                                        Text("Estimasi bulanan").bold().foregroundStyle(Color.cyan)
                                     }.padding(.bottom, 1)
                                     
                                     Text("Rp 123.456")
                                         .font(.headline)
-                                        .foregroundStyle(.green)
+                                        .foregroundStyle(.white)
                                     
                                 }
                             }
@@ -57,22 +57,22 @@ struct MainView: View {
                                 Spacer()
                                 
                                 HStack {
-                                    Text("Mingguan")
+                                    Text("Harian")
                                     Spacer()
                                     Text("Rp 123.456")
                                         .font(.headline)
-                                        .foregroundStyle(.green)
+                                        .foregroundStyle(.white)
                                     
                                 }
                                 
                                 Spacer()
                                 
                                 HStack {
-                                    Text("Bulanan")
+                                    Text("Mingguan")
                                     Spacer()
                                     Text("Rp 123.456")
                                         .font(.headline)
-                                        .foregroundStyle(.green)
+                                        .foregroundStyle(.white)
                                 }
                                 
                                 Spacer()
@@ -84,24 +84,25 @@ struct MainView: View {
                                     HStack {
                             Text("Perangkat")
                                 .font(.title3.bold())
-                                .foregroundStyle(.red)
+                                .foregroundStyle(.white)
                                 .textCase(.none)
-            
                             
-                            Image(systemName: "display").font(.title3)
-                                .foregroundStyle(Color.red)
+                            
+                            //                            Image(systemName: "display").font(.title3)
+                            //                                .foregroundStyle(Color.white)
                             
                             Spacer()
                         }
-                            .padding(.leading, -20)
+                            .padding(.leading, -16)
                             .padding(.bottom, 8)
                         ) {
                             ForEach(devices) { device in
                                 NavigationLink(destination: DeviceDetailView(device: device)) {
                                     VStack(alignment: .leading) {
                                         Text(device.name).font(.headline)
-                                        Text("\(device.powerConsumption) Watt").font(.subheadline).foregroundStyle(.secondary)
+                                        
                                     }
+                                    .padding(.vertical, 8)
                                 }
                             }
                             .onDelete(perform: deleteDevices)
@@ -115,7 +116,7 @@ struct MainView: View {
                                 isShowingAddDeviceSheet.toggle()
                             }) {
                                 Image(systemName: "plus")
-                                    .foregroundStyle(.green).bold()
+                                    .foregroundStyle(.cyan).bold()
                             }
                         }
                     }

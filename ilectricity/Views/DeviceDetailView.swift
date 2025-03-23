@@ -29,6 +29,9 @@ struct DeviceDetailView: View {
     @State private var isExcess: Bool = false
     @State private var corrections: [UsageCorrection] = []
     
+    @State private var isEditing = false
+
+    
     @FocusState private var focusedField: FocusField?
     
     enum FocusField {
@@ -45,140 +48,187 @@ struct DeviceDetailView: View {
     }
     
     var body: some View {
-        Form {
-            Section(header:
-                HStack {
-                    Text("Detail Perangkat")
-                        .font(.title3.bold())
-                        .foregroundStyle(.red)
-                        .textCase(.none)
-                    Spacer()
-                }
-                .padding(.leading, -20)
-                .padding(.bottom, 8)
-            ) {
-                TextField("Nama Perangkat", text: $name)
-                    .focused($focusedField, equals: .name)
-                
-                HStack {
-                    Text("Daya")
-                    Spacer()
-                    TextField("Daya", text: $powerConsumption)
-                        .focused($focusedField, equals: .power)
-                        .multilineTextAlignment(.trailing)
-                        .keyboardType(.decimalPad)
-                    Text("W")
-                }
-                
-                HStack {
-                    Text("Lama Pakai")
-                    Spacer()
-                    TextField("Lama", text: $usageDuration)
-                        .focused($focusedField, equals: .duration)
-                        .multilineTextAlignment(.trailing)
-                        .keyboardType(.decimalPad)
-                    
-                    Picker("", selection: $usageUnit) {
-                        Text("Jam").tag(UsageUnit.hours)
-                        Text("Menit").tag(UsageUnit.minutes)
-                    }
-                    .pickerStyle(MenuPickerStyle())
-                    .frame(width: 80)
-                }
-                
-                HStack {
-                    Text("Frekuensi")
-                    Spacer()
-                    TextField("Frekuensi", text: $frequencyPerMonth)
-                        .focused($focusedField, equals: .frequency)
-                        .multilineTextAlignment(.trailing)
-                        .keyboardType(.numberPad)
-                    Text("hari per bulan")
-                }
-            }
-            
-            Section {
-                Button("Simpan Perubahan") {
-                    saveChanges()
-                }
-                .frame(maxWidth: .infinity, alignment: .center)
-                .tint(.black)
+        ZStack {
+
+            Color.clear
                 .contentShape(Rectangle())
-                .bold()
-            }
-            .listRowBackground(Color.green)
-            
-            /// Section untuk koreksi pemakaian harian
-            Section(header:
-                HStack {
-                    Text("Koreksi Pemakaian Harian")
-                        .font(.title3.bold())
-                        .foregroundStyle(.red)
-                        .textCase(.none)
-                    Spacer()
+                .onTapGesture {
+                    focusedField = nil
                 }
-                .padding(.leading, -20)
-                .padding(.bottom, 8)
-            ) {
-                if corrections.isEmpty {
-                    Text("Belum ada data koreksi")
-                        .foregroundStyle(.secondary)
-                        .italic()
-                } else {
-                    ForEach(corrections) { correction in
-                        HStack {
-                            VStack(alignment: .leading) {
-                                Text(formattedDate(correction.date))
-                                    .font(.headline)
-                                Text(correction.isExcess ? "Kelebihan" : "Kekurangan")
-                                    .font(.subheadline)
-                                    .foregroundStyle(correction.isExcess ? .red : .green)
+            
+            Form {
+                Section(header:
+                    HStack {
+                        Text("Detail Perangkat")
+                            .font(.title3.bold())
+                            .foregroundStyle(.white)
+                            .textCase(.none)
+                        Spacer()
+
+                        Button {
+                            isEditing.toggle()
+                            if !isEditing {
+                                // Reset ke data awal
+                                name = device.name
+                                powerConsumption = String(device.powerConsumption)
+                                usageDuration = String(device.usageDuration)
+                                frequencyPerMonth = String(device.frequencyPerMonth)
+                                usageUnit = device.usageUnit
                             }
-                            
-                            Spacer()
-                            
-                            Text("\(correction.correction, specifier: "%.0f") \(correction.usageUnit == .hours ? "jam" : "menit")")
-                                .font(.headline)
-                                .foregroundStyle(correction.isExcess ? .red : .green)
-
-
+                        } label: {
+                            Text(isEditing ? "Batal" : "Edit")
+                                .font(.body)
+                                .foregroundStyle(.cyan)
+                                .textCase(.none)
                         }
                     }
-                    .onDelete(perform: deleteCorrection)
+                    .padding(.leading, -16)
+                    .padding(.bottom, 8)
+                ) {
+                    TextField("Nama Perangkat", text: $name)
+                        .focused($focusedField, equals: .name)
+                        .disabled(!isEditing)
+
+                    HStack {
+                        Text("Daya")
+                        Spacer()
+                        TextField("Daya", text: $powerConsumption)
+                            .focused($focusedField, equals: .power)
+                            .disabled(!isEditing)
+                            .multilineTextAlignment(.trailing)
+                            .keyboardType(.decimalPad)
+                        Text("W")
+                    }
+
+                    HStack {
+                        Text("Lama Pakai")
+                        Spacer()
+                        TextField("Lama", text: $usageDuration)
+                            .focused($focusedField, equals: .duration)
+                            .disabled(!isEditing)
+                            .multilineTextAlignment(.trailing)
+                            .keyboardType(.decimalPad)
+
+                        Picker("", selection: $usageUnit) {
+                            Text("Jam").tag(UsageUnit.hours)
+                            Text("Menit").tag(UsageUnit.minutes)
+                        }
+                        .pickerStyle(MenuPickerStyle())
+                        .frame(width: 80)
+                        .accentColor(Color.cyan)
+                        .disabled(!isEditing)
+                    }
+
+                    HStack {
+                        Text("Frekuensi")
+                        Spacer()
+                        TextField("Frekuensi", text: $frequencyPerMonth)
+                            .focused($focusedField, equals: .frequency)
+                            .disabled(!isEditing)
+                            .multilineTextAlignment(.trailing)
+                            .keyboardType(.numberPad)
+                        Text("hari per bulan")
+                    }
                 }
-            }
-            
-            Section(header:
-                HStack {
+
+                
+                if isEditing {
+                    Section {
+                        Button {
+                            saveChanges()
+                            isEditing = false
+                        } label: {
+                            Text("Simpan Perubahan")
+                                .frame(maxWidth: .infinity)
+                                .foregroundStyle(Color.black)
+                                .bold()
+                        }
+                        .buttonStyle(BorderlessButtonStyle())
+                    }
+                    .listRowBackground(Color.cyan)
+                }
+
+                
+                Section(header:
+                            HStack {
                     Text("Estimasi Penggunaan")
                         .font(.title3.bold())
-                        .foregroundStyle(.red)
+                        .foregroundStyle(.white)
                         .textCase(.none)
                     Spacer()
                 }
-                .padding(.leading, -20)
-                .padding(.bottom, 8)
-            ) {
-                let hoursPerMonth = calculateHoursPerMonth()
-                LabeledContent("Penggunaan per Bulan", value: "\(hoursPerMonth) jam")
-                
-                let powerInKwh = (Double(powerConsumption) ?? 0) / 1000 * Double(hoursPerMonth)
-                LabeledContent("Konsumsi Listrik", value: String(format: "%.2f kWh", powerInKwh))
-                
-                let costEstimation = powerInKwh * 1262
-                LabeledContent("Estimasi Biaya", value: String(format: "Rp %.0f", costEstimation))
-            }
-            
-            Section {
-                Button("Hapus Perangkat") {
-                    deleteDevice()
+                    .padding(.leading, -16)
+                    .padding(.bottom, 8)
+                ) {
+                    let hoursPerMonth = calculateHoursPerMonth()
+                    LabeledContent("Penggunaan per Bulan", value: "\(hoursPerMonth) jam")
+                    
+                    let powerInKwh = (Double(powerConsumption) ?? 0) / 1000 * Double(hoursPerMonth)
+                    LabeledContent("Konsumsi Listrik", value: String(format: "%.2f kWh", powerInKwh))
+                    
+                    let costEstimation = powerInKwh * 1262
+                    LabeledContent("Estimasi Biaya", value: String(format: "Rp %.0f", costEstimation))
                 }
-                .frame(maxWidth: .infinity, alignment: .center)
-                .foregroundStyle(.white)
-                .contentShape(Rectangle())
-                .bold()
+                
+                /// Section untuk koreksi pemakaian harian
+                /// riwayat harian
+                Section(header:
+                            HStack {
+                    Text("Riwayat Harian")
+                        .font(.title3.bold())
+                        .foregroundStyle(.white)
+                        .textCase(.none)
+                    
+                    Spacer()
+                    
+                    Button {
+                        isShowingCorrectionSheet.toggle()
+                    } label: {
+                        Image(systemName: "plus.circle").foregroundStyle(Color.cyan)
+                    }
+                    .buttonStyle(BorderlessButtonStyle()) // Prevents gesture conflicts
+                }
+                    .padding(.leading, -16)
+                    .padding(.bottom, 8)
+                ) {
+                    if corrections.isEmpty {
+                        Text("Belum ada koreksi pemakaian untuk periode ini.")
+                            .foregroundStyle(.secondary)
+                        
+                    } else {
+                        ForEach(corrections) { correction in
+                            HStack {
+                                VStack(alignment: .leading) {
+                                    Text(formattedDate(correction.date))
+                                        .font(.headline)
+                                    Text(correction.isExcess ? "Kelebihan" : "Kekurangan")
+                                        .font(.subheadline)
+                                        .foregroundStyle(correction.isExcess ? .red : .green)
+                                }
+                                
+                                Spacer()
+                                
+                                Text("\(correction.correction, specifier: "%.0f") \(correction.usageUnit == .hours ? "jam" : "menit")")
+                                    .font(.headline)
+                                    .foregroundStyle(correction.isExcess ? .red : .green)
+                            }
+                        }
+                        .onDelete(perform: deleteCorrection)
+                    }
+                }
+                
+                Section {
+                    Button {
+                        deleteDevice()
+                    } label: {
+                        Text("Hapus Perangkat")
+                            .frame(maxWidth: .infinity)
+                            .foregroundStyle(.red)
+                            .bold()
+                    }
+                    .buttonStyle(BorderlessButtonStyle()) // Prevents gesture conflicts
+                }
             }
-            .listRowBackground(Color.red)
         }
         .navigationTitle("Detail Perangkat")
         .navigationBarTitleDisplayMode(.inline)
@@ -191,40 +241,32 @@ struct DeviceDetailView: View {
                     focusedField = nil
                 }
             }
-            
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button(action: {
-                    isShowingCorrectionSheet.toggle()
-                }) {
-                    Image(systemName: "plus")
-                        .foregroundStyle(.green).bold()
-                }
-            }
         }
         
         /// Sheet untuk menambahkan koreksi pemakaian
         .sheet(isPresented: $isShowingCorrectionSheet) {
             NavigationView {
-                Form {
-                    Section(header: Text("Data Koreksi")) {
-                        DatePicker("Tanggal", selection: $correctionDate, displayedComponents: .date)
-                        
-                        HStack {
-                            Text("Lama Pakai")
-                            Spacer()
-                            TextField("Lama", text: $correctionValue)
-                                .focused($focusedField, equals: .correction)
-                                .multilineTextAlignment(.trailing)
-                                .keyboardType(.decimalPad)
+                ZStack {
+                    Form {
+                        Section(header: Text("Data Koreksi")) {
+                            DatePicker("Tanggal", selection: $correctionDate, displayedComponents: .date)
                             
-                            Picker("", selection: $correctionUnit) {
-                                Text("Jam").tag(UsageUnit.hours)
-                                Text("Menit").tag(UsageUnit.minutes)
+                            HStack {
+                                Text("Lama Pakai")
+                                Spacer()
+                                TextField("Lama", text: $correctionValue)
+                                    .focused($focusedField, equals: .correction)
+                                    .multilineTextAlignment(.trailing)
+                                    .keyboardType(.decimalPad)
+                                
+                                Picker("", selection: $correctionUnit) {
+                                    Text("Jam").tag(UsageUnit.hours)
+                                    Text("Menit").tag(UsageUnit.minutes)
+                                }
+                                .pickerStyle(MenuPickerStyle())
+                                .frame(width: 80)
                             }
-                            .pickerStyle(MenuPickerStyle())
-                            .frame(width: 80)
                         }
-
                     }
                 }
                 .navigationTitle("Tambah Koreksi")
@@ -234,6 +276,7 @@ struct DeviceDetailView: View {
                         Button("Batal") {
                             isShowingCorrectionSheet = false
                         }
+                        .foregroundStyle(Color.cyan)
                     }
                     
                     ToolbarItem(placement: .confirmationAction) {
@@ -243,22 +286,20 @@ struct DeviceDetailView: View {
                         }
                         .disabled(correctionValue.isEmpty || Double(correctionValue) == 0)
                     }
-                    
-                    ToolbarItem(placement: .keyboard) {
-                        Button("Done") {
-                            focusedField = nil
-                        }
-                    }
                 }
             }
         }
         .onAppear {
             loadCorrections()
         }
+    
         .gesture(
-            TapGesture().onEnded {
-                focusedField = nil
-            }
+            DragGesture(minimumDistance: 10, coordinateSpace: .local)
+                .onEnded { value in
+                    if value.translation.height > 0 { // Swipe down
+                        focusedField = nil
+                    }
+                }
         )
     }
     
@@ -288,7 +329,7 @@ struct DeviceDetailView: View {
         viewModel.deleteDevice(device)
         dismiss()
     }
-
+    
     private func formattedDate(_ date: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
@@ -297,7 +338,6 @@ struct DeviceDetailView: View {
         return formatter.string(from: date)
     }
     
-
     private func addCorrection() {
         if let value = Double(correctionValue), value > 0 {
             // Tentukan apakah koreksi adalah kelebihan atau kekurangan berdasarkan unit
@@ -324,7 +364,6 @@ struct DeviceDetailView: View {
             loadCorrections()
         }
     }
-
     
     // Fungsi untuk menghapus koreksi
     private func deleteCorrection(at offsets: IndexSet) {
@@ -332,7 +371,6 @@ struct DeviceDetailView: View {
         loadCorrections()
     }
 }
-
 
 
 #Preview {
