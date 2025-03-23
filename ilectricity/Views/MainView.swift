@@ -1,9 +1,3 @@
-//
-//  MainView.swift
-//  ilectricity
-//
-//  Created by Samuel Andrey Aji Prasetya on 18/03/25.
-
 import SwiftUI
 import SwiftData
 
@@ -17,14 +11,13 @@ struct MainView: View {
     var body: some View {
         NavigationView {
             ZStack {
-                
                 LinearGradient(
                     gradient: Gradient(
                         colors: [
-                            Color.cyan.opacity(0.5),
-                            Color.cyan.opacity(0.2),
-                            Color.teal.opacity(0.0),
-                            Color.teal.opacity(0.0)
+                            Color.blue.opacity(0.3),
+                            Color.blue.opacity(0.0),
+                            Color.blue.opacity(0.0),
+                            Color.blue.opacity(0.0)
                         ]
                     ),
                     startPoint: .top,
@@ -34,81 +27,163 @@ struct MainView: View {
                 
                 VStack {
                     List {
-                        /// Report estimation section.
+                        
+                        // SECTION: Estimasi
                         Section {
                             NavigationLink {
-                                
+                                // Detail view for monthly estimation
                             } label: {
-                                VStack (alignment: .leading) {
+                                HStack {
+                                    VStack(alignment: .leading, spacing: 8) {
+                                        HStack {
+                                            Image(systemName: "creditcard.fill")
+                                                .foregroundStyle(Color(.systemBlue))
+                                                .font(.system(size: 16))
+                                            Text("Estimasi Bulanan")
+                                                .font(.headline)
+                                                .foregroundStyle(Color(.systemBlue))
+                                        }
+                                        
+                                        Text("Rp 123.456")
+                                            .font(.system(size: 24, weight: .bold))
+                                            .foregroundStyle(Color(.label))
+                                    }
+                                    Spacer()
+                                }
+                                .padding(.vertical, 8)
+                                .padding(.horizontal, 4)
+                            }
+                            .listRowBackground(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(Color(.secondarySystemBackground))
+                                    .padding(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
+                            )
+                            
+                            
+                            HStack(spacing: 10) {
+                                // Estimasi Harian
+                                VStack(alignment: .leading, spacing: 8) {
                                     HStack {
-                                        Image(systemName: "creditcard.fill")
-                                            .foregroundStyle(.cyan)
-                                        Text("Estimasi bulanan").bold().foregroundStyle(Color.cyan)
-                                    }.padding(.bottom, 1)
+                                        Image(systemName: "sun.max.fill")
+                                            .foregroundStyle(Color(.systemOrange))
+                                            .font(.system(size: 16))
+                                        Text("Harian")
+                                            .font(.headline)
+                                            .foregroundStyle(Color(.systemOrange))
+                                    }
                                     
                                     Text("Rp 123.456")
-                                        .font(.headline)
-                                        .foregroundStyle(.white)
-                                    
+                                        .font(.system(size: 20, weight: .bold))
+                                        .foregroundStyle(Color(.label))
                                 }
+                                .padding(.vertical, 1)
+                                .padding(.horizontal, 12)
+                                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+                                
+                                .background(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .fill(Color(.secondarySystemBackground))
+                                )
+                                
+                                
+                                // Estimasi Mingguan
+                                VStack(alignment: .leading, spacing: 8) {
+                                    HStack {
+                                        Image(systemName: "calendar")
+                                            .foregroundStyle(Color(.systemTeal))
+                                            .font(.system(size: 16))
+                                        Text("Mingguan")
+                                            .font(.headline)
+                                            .foregroundStyle(Color(.systemTeal))
+                                    }
+                                    
+                                    Text("Rp 1.500.000")
+                                        .font(.system(size: 20, weight: .bold))
+                                        .foregroundStyle(Color(.label))
+                                }
+                                .padding(.vertical, 15)
+                                .padding(.horizontal, 12)
+                                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .fill(Color(.secondarySystemBackground))
+                                )
                             }
                             
-                            VStack (alignment: .leading) {
-                                Spacer()
-                                
-                                HStack {
-                                    Text("Harian")
-                                    Spacer()
-                                    Text("Rp 123.456")
-                                        .font(.headline)
-                                        .foregroundStyle(.white)
-                                    
-                                }
-                                
-                                Spacer()
-                                
-                                HStack {
-                                    Text("Mingguan")
-                                    Spacer()
-                                    Text("Rp 123.456")
-                                        .font(.headline)
-                                        .foregroundStyle(.white)
-                                }
-                                
-                                Spacer()
-                            }
-                        }
+                            .padding(.top, 4)
+                            .listRowBackground(Color.clear)
+                            .listRowInsets(EdgeInsets())
+                            
+                        }.listRowSeparator(.hidden)
                         
-                        /// List device section.
+                        // SECTION: Perangkat
                         Section(header:
                                     HStack {
                             Text("Perangkat")
                                 .font(.title3.bold())
-                                .foregroundStyle(.white)
+                                .foregroundStyle(Color(.label))
                                 .textCase(.none)
                             
-                            
-                            //                            Image(systemName: "display").font(.title3)
-                            //                                .foregroundStyle(Color.white)
-                            
                             Spacer()
+                            
+                            Text("\(devices.count)")
+                                .font(.subheadline.bold())
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 4)
+                                .background(
+                                    Capsule()
+                                        .fill(Color(.systemGray5))
+                                )
                         }
-                            .padding(.leading, -16)
                             .padding(.bottom, 8)
+                            .padding(.top, 8)
                         ) {
                             ForEach(devices) { device in
                                 NavigationLink(destination: DeviceDetailView(device: device)) {
-                                    VStack(alignment: .leading) {
-                                        Text(device.name).font(.headline)
+                                    HStack(spacing: 16) {
+                                        ZStack {
+                                            Circle()
+                                                .fill(Color(.systemGray6))
+                                                .frame(width: 40, height: 40)
+                                            
+                                            Image(systemName: DeviceIconMapper.detectIcon(for: device.name))
+                                                .font(.system(size: 18))
+                                                .foregroundColor(Color(.systemBlue))
+                                        }
                                         
+                                        VStack(alignment: .leading, spacing: 4) {
+                                            Text(device.name)
+                                                .font(.headline)
+                                            
+                                            Text("\(device.powerConsumption) Watt • \(device.usageDuration) \(device.usageUnit.rawValue)")
+                                                .font(.subheadline)
+                                                .foregroundColor(Color(.systemGray))
+                                        }
+                                        
+                                        Spacer()
+                                        
+                                        let powerLevel = min(Double(device.powerConsumption) / 1000, 1.0)
+                                        Circle()
+                                            .fill(
+                                                powerLevel < 0.3 ? Color(.systemGreen) :
+                                                    powerLevel < 0.7 ? Color(.systemYellow) : Color(.systemRed)
+                                            )
+                                            .frame(width: 10, height: 10)
                                     }
-                                    .padding(.vertical, 8)
+                                    .padding(.vertical, 4)
                                 }
+                                .listRowBackground(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .fill(Color(.secondarySystemBackground))
+                                        .padding(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
+                                )
                             }
                             .onDelete(perform: deleteDevices)
                         }
+                        .listRowSeparator(.hidden)
                     }
                     .scrollContentBackground(.hidden)
+                    .listStyle(.insetGrouped)
                     .navigationTitle("Estimasi")
                     .toolbar {
                         ToolbarItem {
@@ -116,11 +191,11 @@ struct MainView: View {
                                 isShowingAddDeviceSheet.toggle()
                             }) {
                                 Image(systemName: "plus")
-                                    .foregroundStyle(.cyan).bold()
+                                    .fontWeight(.semibold)
                             }
                         }
                     }
-                } /// End Main VStack
+                }
                 .sheet(isPresented: $isShowingAddDeviceSheet) {
                     AddDeviceView(isPresented: $isShowingAddDeviceSheet)
                 }
@@ -145,6 +220,8 @@ struct MainView: View {
         let viewModel = DeviceViewModel(modelContext: context)
         
         viewModel.addDevice(name: "AC Kamar", powerConsumption: 789, usageDuration: 5, frequencyPerMonth: 30, usageUnit: .hours)
+        viewModel.addDevice(name: "Komputer", powerConsumption: 450, usageDuration: 8, frequencyPerMonth: 20, usageUnit: .hours)
+        viewModel.addDevice(name: "TV", powerConsumption: 120, usageDuration: 4, frequencyPerMonth: 30, usageUnit: .hours)
         
         return MainView()
             .modelContainer(container)
