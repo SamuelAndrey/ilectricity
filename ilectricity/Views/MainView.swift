@@ -118,7 +118,7 @@ struct MainView: View {
                         
                         // SECTION: Perangkat
                         Section(header:
-                                    HStack {
+                            HStack {
                             Text("Perangkat")
                                 .font(.title3.bold())
                                 .foregroundStyle(Color(.label))
