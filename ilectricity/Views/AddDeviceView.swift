@@ -36,16 +36,23 @@ struct AddDeviceView: View {
                         ) {
                             // Nama Perangkat
                             HStack {
-                                Image(systemName: "tag.fill")
-                                    .foregroundColor(Color(.systemBlue))
-                                    .font(.system(size: 16))
-                                Text("Nama")
+                                HStack {
+                                    Image(systemName: "tag.fill")
+                                        .foregroundColor(Color(.systemBlue))
+                                        .font(.system(size: 16))
+                                    
+                                    Text("Nama")
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                    
+                                }
+                                
                                 Spacer()
+                                
                                 TextField("Nama perangkat", text: $name)
-                                    .multilineTextAlignment(.trailing)
                                     .focused($isNameFieldFocused)
                                     .focused($focusedField, equals: .name)
                                     .padding(.vertical, 4)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
                             }
                             .listRowBackground(
                                 RoundedRectangle(cornerRadius: 12)
@@ -55,15 +62,21 @@ struct AddDeviceView: View {
                             
                             // Daya
                             HStack {
-                                Image(systemName: "bolt.fill")
-                                    .foregroundColor(Color(.systemYellow))
-                                    .font(.system(size: 16))
-                                Text("Daya (Watt)")
+                                HStack {
+                                    Image(systemName: "bolt.fill")
+                                        .foregroundColor(Color(.systemYellow))
+                                        .font(.system(size: 16))
+                                    
+                                    Text("Daya (Watt)")
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                }
+                                
                                 Spacer()
+                                
                                 TextField("Daya perangkat", value: $powerConsumption, format: .number)
-                                    .multilineTextAlignment(.trailing)
                                     .keyboardType(.numberPad)
                                     .focused($focusedField, equals: .power)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
                             
                             }
                             .padding(.vertical, 4)
@@ -73,18 +86,25 @@ struct AddDeviceView: View {
                                     .padding(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
                             )
                             
+                            
                             // Lama Pakai
                             VStack(alignment: .leading, spacing: 8) {
                                 HStack {
-                                    Image(systemName: "timer.circle.fill")
-                                        .foregroundColor(Color(.systemTeal))
-                                        .font(.system(size: 16))
-                                    Text("Lama Pakai")
+                                    HStack {
+                                        Image(systemName: "timer.circle.fill")
+                                            .foregroundColor(Color(.systemTeal))
+                                            .font(.system(size: 16))
+                                        Text("Pemakaian")
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                    }
+                                    
                                     Spacer()
+                                    
                                     TextField("Durasi per hari", value: $usageDuration, format: .number)
-                                        .multilineTextAlignment(.trailing)
                                         .keyboardType(.numberPad)
                                         .focused($focusedField, equals: .duration)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                    
                                 }.padding(.bottom, 10)
                                 
                                 Picker("Unit", selection: $usageUnit) {
@@ -97,8 +117,14 @@ struct AddDeviceView: View {
                             .listRowBackground(
                                 RoundedRectangle(cornerRadius: 12)
                                     .fill(Color(.secondarySystemBackground))
-                                    .padding(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
+                                    .padding(EdgeInsets(top: 4, leading: 0, bottom: 0, trailing: 0))
                             )
+
+                            Text("Durasi pemakaian adalah waktu yang dihabiskan perangkat dalam satu hari.")
+                                .font(.footnote)
+                                .foregroundColor(Color(.secondaryLabel))
+                                .listRowBackground(Color.clear)
+
 
                             // Frekuensi
                             HStack {
@@ -107,13 +133,12 @@ struct AddDeviceView: View {
                                     .font(.system(size: 16))
                                 Text("Frekuensi")
                                 Picker("", selection: $frequencyPerMonth) {
-                                    ForEach(1...30, id: \.self) { day in
+                                    ForEach(1...31, id: \.self) { day in
                                         Text("\(day)").tag(day)
                                     }
                                 }
                                 .pickerStyle(.wheel)
-                                .frame(width: .infinity, height: 100)
-                                .scaleEffect(0.8)
+                                .frame(width: 80, height: 100)
                                 .clipped()
                                 Text("Hari per bulan")
                                     .foregroundColor(Color(.systemGray))
@@ -124,6 +149,12 @@ struct AddDeviceView: View {
                                     .fill(Color(.secondarySystemBackground))
                                     .padding(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
                             )
+
+                            Text("Frekuensi pemakaian adalah jumlah hari perangkat digunakan dalam satu bulan.")
+                                .font(.footnote)
+                                .foregroundColor(Color(.secondaryLabel))
+                                .listRowBackground(Color.clear)
+
 
                         }
                         .listRowSeparator(.hidden)
@@ -157,13 +188,16 @@ struct AddDeviceView: View {
                 isNameFieldFocused = true
             }
             .toolbar {
-                ToolbarItem(placement: .keyboard) {
+                ToolbarItemGroup(placement: .keyboard) {
+                    Spacer()
                     Button("Done") {
                         focusedField = nil
                         isNameFieldFocused = false
                     }
                 }
             }
+
+
             .scrollDismissesKeyboard(.interactively)
             .gesture(
                 DragGesture(minimumDistance: 10, coordinateSpace: .local)
