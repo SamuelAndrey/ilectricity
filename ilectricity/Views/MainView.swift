@@ -39,7 +39,7 @@ struct MainView: View {
                                             Image(systemName: "creditcard.fill")
                                                 .foregroundStyle(Color(.systemBlue))
                                                 .font(.system(size: 16))
-                                            Text("Estimasi Bulanan")
+                                            Text("Estimasi Tagihan Bulanan")
                                                 .font(.headline)
                                                 .foregroundStyle(Color(.systemBlue))
                                         }
@@ -119,7 +119,7 @@ struct MainView: View {
                         // SECTION: Perangkat
                         Section(header:
                             HStack {
-                            Text("Perangkat")
+                            Text("Perangkat yang Digunakan")
                                 .font(.title3.bold())
                                 .foregroundStyle(Color(.label))
                                 .textCase(.none)
@@ -184,7 +184,7 @@ struct MainView: View {
                     }
                     .scrollContentBackground(.hidden)
                     .listStyle(.insetGrouped)
-                    .navigationTitle("Estimasi")
+                    .navigationTitle("Estimasi Tagihan")
                     .toolbar {
                         ToolbarItem {
                             Button(action: {
