@@ -31,7 +31,6 @@ struct DeviceDetailView: View {
     
     @State private var isEditing = false
     
-    
     @FocusState private var focusedField: FocusField?
     
     enum FocusField {
@@ -48,210 +47,212 @@ struct DeviceDetailView: View {
     }
     
     var body: some View {
-        ZStack {
-            VStack {
-                List {
-                    // SECTION: Device Details
-                    Section(header:
-                                HStack {
-                        Text("Perangkat")
-                            .font(.title3.bold())
-                            .foregroundStyle(Color(.label))
+      
+        VStack {
+            List {
+                // SECTION: Device Details
+                Section(header: HStack {
+                    Text("Perangkat")
+                        .font(.title3.bold())
+                        .foregroundStyle(Color(.label))
+                        .textCase(.none)
+                    
+                    Spacer()
+                    
+                    Button {
+                        isEditing.toggle()
+                        if !isEditing {
+                            // Reset ke data awal
+                            name = device.name
+                            powerConsumption = String(device.powerConsumption)
+                            usageDuration = String(device.usageDuration)
+                            frequencyPerMonth = String(device.frequencyPerMonth)
+                            usageUnit = device.usageUnit
+                        }
+                    } label: {
+                        Text(isEditing ? "Batal" : "Ubah")
                             .textCase(.none)
-                        
-                        Spacer()
-                        
-                        Button {
-                            isEditing.toggle()
-                            if !isEditing {
-                                // Reset ke data awal
-                                name = device.name
-                                powerConsumption = String(device.powerConsumption)
-                                usageDuration = String(device.usageDuration)
-                                frequencyPerMonth = String(device.frequencyPerMonth)
-                                usageUnit = device.usageUnit
-                            }
-                        } label: {
-                            Text(isEditing ? "Batal" : "Ubah")
-                                .textCase(.none)
-                                .foregroundStyle(Color(.blue))
-                                .font(.body)
-                        }
+                            .foregroundStyle(Color(.blue))
+                            .font(.body)
                     }
-                        .padding(.bottom, 8)
-                    ) {
-                        // Nama Perangkat
+                }
+                    .padding(.bottom, 8)
+                ) {
+                    // Nama Perangkat
+                    HStack {
                         HStack {
-                            HStack {
-                                Image(systemName: "tag.fill")
-                                    .foregroundColor(Color(.systemBlue))
-                                    .font(.system(size: 16))
-                                
-                                Text("Nama")
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                            }
-                            
-                            
-                            Spacer()
-                            
-                            TextField("Nama perangkat", text: $name)
-                                .focused($focusedField, equals: .name)
-                                .disabled(!isEditing)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .foregroundColor(isEditing ? .primary : .secondary)
-                        }
-                        .padding(.vertical, 4)
-                        .listRowBackground(
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(Color(.secondarySystemBackground))
-                                .padding(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
-                        )
-                        
-                        // Daya
-                        HStack {
-                            HStack {
-                                Image(systemName: "bolt.fill")
-                                    .foregroundColor(Color(.systemYellow))
-                                    .font(.system(size: 16))
-                                
-                                Text("Daya (Watt)")
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                
-                            }
-                            
-                            
-                            Spacer()
-                            
-                            TextField("Daya", text: $powerConsumption)
-                                .focused($focusedField, equals: .power)
-                                .disabled(!isEditing)
-                                .keyboardType(.decimalPad)
-                                .foregroundColor(isEditing ? .primary : .secondary)
-                        }
-                        .padding(.vertical, 4)
-                        .listRowBackground(
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(Color(.secondarySystemBackground))
-                                .padding(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
-                        )
-                        
-                        // Lama Pakai
-                        HStack {
-                            HStack {
-                                Image(systemName: "timer.circle.fill")
-                                    .foregroundColor(Color(.systemTeal))
-                                    .font(.system(size: 16))
-                                Text("Lama Pakai")
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                            }
-                            Spacer()
-                            
-                            HStack {
-                                TextField("Lama", text: $usageDuration)
-                                    .focused($focusedField, equals: .duration)
-                                    .disabled(!isEditing)
-                                    .keyboardType(.numberPad)
-                                    .foregroundColor(isEditing ? .primary : .secondary)
-                                
-                                Picker("", selection: $usageUnit) {
-                                    Text("Jam").tag(UsageUnit.hours)
-                                    Text("Menit").tag(UsageUnit.minutes)
-                                }
-                                .pickerStyle(.segmented)
-                                .frame(width: 100)
-                                .accentColor(Color(.blue))
-                                .disabled(!isEditing)
-                            }
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            
-                        }
-                        .padding(.vertical, 4)
-                        .listRowBackground(
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(Color(.secondarySystemBackground))
-                                .padding(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
-                        )
-                        
-                        // Frekuensi
-                        HStack {
-                            Image(systemName: "repeat.circle.fill")
-                                .foregroundColor(Color(.systemOrange))
+                            Image(systemName: "tag.fill")
+                                .foregroundColor(Color(.systemBlue))
                                 .font(.system(size: 16))
                             
-                            Text("Frekuensi")
-                            
-                            Spacer()
-                            
-                            HStack {
-                                
-                                Picker("", selection: $frequencyPerMonth) {
-                                    ForEach(1...31, id: \.self) { day in
-                                        Text("\(day)").tag("\(day)")
-                                    }
-                                }
-                                .pickerStyle(.wheel)
-                                .frame(width: 80, height: 80)
-                                .scaleEffect(0.8)
-                                .disabled(!isEditing)
-                                .clipped()
-                                
-                                Text("hari per bulan")
-                                    .foregroundColor(Color(.systemGray))
-                            }
-                            
-                            
+                            Text("Nama")
+                                .frame(maxWidth: .infinity, alignment: .leading)
                         }
-                        .listRowBackground(
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(Color(.secondarySystemBackground))
-                                .padding(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
-                        )
-                    }
-                    .listRowSeparator(.hidden)
-                    
-                    // SECTION: Save Changes Button
-                    if isEditing {
-                        Section {
-                            Button {
-                                saveChanges()
-                                isEditing = false
-                            } label: {
-                                Text("Simpan Perubahan")
-                                    .font(.headline)
-                                    .frame(maxWidth: .infinity)
-                                    .foregroundStyle(Color.white)
-                            }
-                            .buttonStyle(BorderlessButtonStyle())
-                        }
-                        .listRowBackground(Color(.blue))
-                        .listRowSeparator(.hidden)
-                    }
-                    
-                    // SECTION: Daily History
-                    Section(header:
-                                HStack {
-                        Text("Riwayat Koreksi Harian")
-                            .font(.title3.bold())
-                            .foregroundStyle(Color(.label))
-                            .textCase(.none)
+                        
                         
                         Spacer()
                         
+                        TextField("Nama perangkat", text: $name)
+                            .focused($focusedField, equals: .name)
+                            .disabled(!isEditing)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .foregroundColor(isEditing ? .primary : .secondary)
+                    }
+                    .padding(.vertical, 4)
+                    .listRowBackground(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(Color(.secondarySystemBackground))
+                            .padding(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
+                    )
+                    
+                    // Daya
+                    HStack {
+                        HStack {
+                            Image(systemName: "bolt.fill")
+                                .foregroundColor(Color(.systemYellow))
+                                .font(.system(size: 16))
+                            
+                            Text("Daya (Watt)")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            
+                        }
+                        
+                        
+                        Spacer()
+                        
+                        TextField("Daya", text: $powerConsumption)
+                            .focused($focusedField, equals: .power)
+                            .disabled(!isEditing)
+                            .keyboardType(.decimalPad)
+                            .foregroundColor(isEditing ? .primary : .secondary)
+                    }
+                    .padding(.vertical, 4)
+                    .listRowBackground(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(Color(.secondarySystemBackground))
+                            .padding(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
+                    )
+                    
+                    // Lama Pakai
+                    HStack {
+                        HStack {
+                            Image(systemName: "timer.circle.fill")
+                                .foregroundColor(Color(.systemTeal))
+                                .font(.system(size: 16))
+                            Text("Lama Pakai")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                        Spacer()
+                        
+                        HStack {
+                            TextField("Lama", text: $usageDuration)
+                                .focused($focusedField, equals: .duration)
+                                .disabled(!isEditing)
+                                .keyboardType(.numberPad)
+                                .foregroundColor(isEditing ? .primary : .secondary)
+                            
+                            Picker("", selection: $usageUnit) {
+                                Text("Jam").tag(UsageUnit.hours)
+                                Text("Menit").tag(UsageUnit.minutes)
+                            }
+                            .pickerStyle(.segmented)
+                            .frame(width: 100)
+                            .accentColor(Color(.blue))
+                            .disabled(!isEditing)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        
+                    }
+                    .padding(.vertical, 4)
+                    .listRowBackground(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(Color(.secondarySystemBackground))
+                            .padding(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
+                    )
+                    
+                    // Frekuensi
+                    HStack {
+                        Image(systemName: "repeat.circle.fill")
+                            .foregroundColor(Color(.systemOrange))
+                            .font(.system(size: 16))
+                        
+                        Text("Frekuensi")
+                        
+                        Spacer()
+                        
+                        HStack {
+                            
+                            Picker("", selection: $frequencyPerMonth) {
+                                ForEach(1...31, id: \.self) { day in
+                                    Text("\(day)").tag("\(day)")
+                                }
+                            }
+                            .pickerStyle(.wheel)
+                            .frame(width: 80, height: 80)
+                            .scaleEffect(0.8)
+                            .disabled(!isEditing)
+                            .clipped()
+                            
+                            Text("hari per bulan")
+                                .foregroundColor(Color(.systemGray))
+                        }
+                        
+                        
+                    }
+                    .listRowBackground(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(Color(.secondarySystemBackground))
+                            .padding(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
+                    )
+                }
+                .listRowSeparator(.hidden)
+                
+                // SECTION: Save Changes Button
+                if isEditing {
+                    Section {
                         Button {
-                            isShowingCorrectionSheet.toggle()
+                            saveChanges()
+                            isEditing = false
                         } label: {
+                            Text("Simpan Perubahan")
+                                .font(.headline)
+                                .frame(maxWidth: .infinity)
+                                .foregroundStyle(Color.white)
+                        }
+                        .buttonStyle(BorderlessButtonStyle())
+                    }
+                    .listRowBackground(Color(.blue))
+                    .listRowSeparator(.hidden)
+                }
+                
+                // SECTION: Daily History
+                Section(header: HStack {
+                    Text("Riwayat Koreksi Harian")
+                        .font(.title3.bold())
+                        .foregroundStyle(Color(.label))
+                        .textCase(.none)
+                    
+                    Spacer()
+                    
+                    Button {
+                        isShowingCorrectionSheet.toggle()
+                    } label: {
+                        HStack {
                             Text("Tambah")
                                 .font(.body)
                                 .foregroundStyle(Color(.blue))
                                 .textCase(.none)
                         }
-                        .buttonStyle(BorderlessButtonStyle())
-                    }
-                        .padding(.bottom, 8)
-                        .padding(.top, 8)
-                    ) {
                         
-                        if corrections.isEmpty {
+                    }
+                    .buttonStyle(BorderlessButtonStyle())
+                }
+                    .padding(.bottom, 8)
+                    .padding(.top, 8)
+                ) {
+                    
+                    if corrections.isEmpty {
+                        HStack {
                             Text("Belum ada koreksi pemakaian untuk periode ini.")
                                 .font(.footnote)
                                 .foregroundStyle(Color(.secondaryLabel))
@@ -261,166 +262,162 @@ struct DeviceDetailView: View {
                                         .fill(Color(.secondarySystemBackground))
                                         .padding(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
                                 )
-                        } else {
+                        }
+                        
+                    } else {
+                        
+                        ForEach(corrections) { correction in
+                            HStack {
                             
-                            ForEach(corrections) { correction in
-                                HStack {
-                                    ZStack {
-                                        Circle()
-                                            .fill(correction.isExcess ? Color(.systemRed).opacity(0.2) : Color(.systemGreen).opacity(0.2))
-                                            .frame(width: 40, height: 40)
-                                        
-                                        Image(systemName: correction.isExcess ? "arrow.up.circle.fill" : "arrow.down.circle.fill")
-                                            .font(.system(size: 18))
-                                            .foregroundColor(correction.isExcess ? Color(.systemRed) : Color(.systemGreen))
-                                    }
+                                ZStack {
+                                    Circle()
+                                        .fill(correction.isExcess ? Color(.systemRed).opacity(0.2) : Color(.systemGreen).opacity(0.2))
+                                        .frame(width: 40, height: 40)
                                     
-                                    VStack(alignment: .leading, spacing: 4) {
-                                        Text(formattedDate(correction.date))
-                                            .font(.headline)
-                                        
-                                        Text(correction.isExcess ? "Kelebihan" : "Kekurangan")
-                                            .font(.subheadline)
-                                            .foregroundStyle(correction.isExcess ? Color(.systemRed) : Color(.systemGreen))
-                                    }
+                                    Image(systemName: correction.isExcess ? "arrow.up.circle.fill" : "arrow.down.circle.fill")
+                                        .font(.system(size: 18))
+                                        .foregroundColor(correction.isExcess ? Color(.systemRed) : Color(.systemGreen))
+                                }
+                                
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(formattedDate(correction.date))
+                                        .font(.headline)
                                     
-                                    Spacer()
-                                    
-                                    Text("\(correction.correction, specifier: "%.0f") \(correction.usageUnit == .hours ? "jam" : "menit")")
-                                        .font(.system(size: 16, weight: .semibold))
+                                    Text(correction.isExcess ? "Kelebihan" : "Kekurangan")
+                                        .font(.subheadline)
                                         .foregroundStyle(correction.isExcess ? Color(.systemRed) : Color(.systemGreen))
                                 }
-                                .padding(.vertical, 4)
-                                .listRowBackground(
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .fill(Color(.secondarySystemBackground))
-                                        .padding(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
-                                )
-                            }.onDelete(perform: deleteCorrection)
-                        }
-                    }
-                    .listRowSeparator(.hidden)
-                    
-                    // SECTION: Estimation
-                    Section(header:
-                                HStack {
-                        Text("Estimasi")
-                            .font(.title3.bold())
-                            .foregroundStyle(Color(.label))
-                            .textCase(.none)
-                        Spacer()
-                    }
-                        .padding(.bottom, 8)
-                        .padding(.top, 8)
-                    ) {
-                        let hoursPerMonth = calculateHoursPerMonth()
-                        
-                        // Usage per month
-                        HStack {
-                            HStack {
                                 
-                                Text("Penggunaan Bulan ini")
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                            }
-                            
-                            Spacer()
-                            
-                            Text("\(hoursPerMonth) jam")
-                                .foregroundColor(Color(.label))
-                                .font(.system(size: 15, weight: .medium))
-                        }
-                        .padding(.vertical, 4)
-                        .listRowBackground(
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(Color(.secondarySystemBackground))
-                                .padding(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
-                        )
-                        
-                        // Power consumption
-                        let powerInKwh = (Double(powerConsumption) ?? 0) / 1000 * Double(hoursPerMonth)
-                        HStack {
-                            HStack {
+                                Spacer()
                                 
-                                Text("Konsumsi Listrik")
-                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                Text("\(correction.correction, specifier: "%.0f") \(correction.usageUnit == .hours ? "jam" : "menit")")
+                                    .font(.system(size: 16, weight: .semibold))
+                                    .foregroundStyle(correction.isExcess ? Color(.systemRed) : Color(.systemGreen))
                             }
-                            
-                            Spacer()
-                            
-                            Text(String(format: "%.2f kWh", powerInKwh))
-                                .foregroundColor(Color(.label))
-                                .font(.system(size: 15, weight: .medium))
-                        }
-                        .padding(.vertical, 4)
-                        .listRowBackground(
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(Color(.secondarySystemBackground))
-                                .padding(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
-                        )
-                        
-                        // Cost estimate
-                        let costEstimation = powerInKwh * 1262
-                        HStack {
-                            HStack {
-                                Text("Estimasi Biaya")
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                            }
-                            
-                            Spacer()
-                            
-                            Text(String(format: "Rp %.0f", costEstimation))
-                                .foregroundColor(Color(.label))
-                                .font(.system(size: 15, weight: .bold))
-                        }
-                        .padding(.vertical, 4)
-                        .listRowBackground(
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(Color(.secondarySystemBackground))
-                                .padding(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
-                        )
+                            .padding(.vertical, 4)
+                            .listRowBackground(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(Color(.secondarySystemBackground))
+                                    .padding(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
+                            )
+                        }.onDelete(perform: deleteCorrection)
                     }
-                    .listRowSeparator(.hidden)
-                    
-                    
-                    // SECTION: Delete Device Button
-                    Section {
-                        Button {
-                            deleteDevice()
-                        } label: {
-                            HStack {
-                                Image(systemName: "trash.fill")
-                                    .font(.system(size: 16))
-                                    .foregroundStyle(Color.red)
-                                
-                                Text("Hapus Perangkat")
-                                    .font(.headline)
-                                    .foregroundStyle(Color.red)
-                            }
-                            .frame(maxWidth: .infinity)
-                            .foregroundStyle(Color.white)
-                        }
-                        .buttonStyle(BorderlessButtonStyle())
-                    }
-                    .listRowSeparator(.hidden)
                 }
-                .scrollIndicators(.hidden)
+                .listRowSeparator(.hidden)
                 
+                // SECTION: Estimation
+                Section(header:
+                            HStack {
+                    Text("Estimasi")
+                        .font(.title3.bold())
+                        .foregroundStyle(Color(.label))
+                        .textCase(.none)
+                    Spacer()
+                }
+                    .padding(.bottom, 8)
+                    .padding(.top, 8)
+                ) {
+                    let hoursPerMonth = calculateHoursPerMonth()
+                    
+                    // Usage per month
+                    HStack {
+                        HStack {
+                            
+                            Text("Penggunaan Bulan ini")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                        
+                        Spacer()
+                        
+                        Text("\(hoursPerMonth) jam")
+                            .foregroundColor(Color(.label))
+                            .font(.system(size: 15, weight: .medium))
+                    }
+                    .padding(.vertical, 4)
+                    .listRowBackground(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(Color(.secondarySystemBackground))
+                            .padding(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
+                    )
+                    
+                    // Power consumption
+                    let powerInKwh = (Double(powerConsumption) ?? 0) / 1000 * Double(hoursPerMonth)
+                    HStack {
+                        HStack {
+                            
+                            Text("Konsumsi Listrik")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                        
+                        Spacer()
+                        
+                        Text(String(format: "%.2f kWh", powerInKwh))
+                            .foregroundColor(Color(.label))
+                            .font(.system(size: 15, weight: .medium))
+                    }
+                    .padding(.vertical, 4)
+                    .listRowBackground(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(Color(.secondarySystemBackground))
+                            .padding(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
+                    )
+                    
+                    // Cost estimate
+                    let costEstimation = powerInKwh * 1262
+                    HStack {
+                        HStack {
+                            Text("Estimasi Biaya")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                        
+                        Spacer()
+                        
+                        Text(String(format: "Rp %.0f", costEstimation))
+                            .foregroundColor(Color(.label))
+                            .font(.system(size: 15, weight: .bold))
+                    }
+                    .padding(.vertical, 4)
+                    .listRowBackground(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(Color(.secondarySystemBackground))
+                            .padding(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
+                    )
+                }
+                .listRowSeparator(.hidden)
+                
+                
+                // SECTION: Delete Device Button
+                Section {
+                    Button {
+                        deleteDevice()
+                    } label: {
+                        HStack {
+                            Image(systemName: "trash.fill")
+                                .font(.system(size: 16))
+                                .foregroundStyle(Color.red)
+                            
+                            Text("Hapus Perangkat")
+                                .font(.headline)
+                                .foregroundStyle(Color.red)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .foregroundStyle(Color.white)
+                    }
+                    .buttonStyle(BorderlessButtonStyle())
+                }
+                .listRowSeparator(.hidden)
             }
+            .scrollIndicators(.hidden)
+            
         }
+        
+        .hideKeyboardWhenTappedAround()
         .navigationTitle("Detail Perangkat")
         .navigationBarTitleDisplayMode(.inline)
         .alert("Perubahan Berhasil Disimpan", isPresented: $showSuccessAlert) {
             Button("OK", role: .cancel) { }
         }
-        .toolbar {
-            ToolbarItemGroup(placement: .keyboard) {
-                Spacer()
-                Button("Done") {
-                    focusedField = nil
-                }
-                
-            }
-        }
+        
         
         // Sheet for adding corrections
         .sheet(isPresented: $isShowingCorrectionSheet) {
@@ -497,6 +494,7 @@ struct DeviceDetailView: View {
                         
                     }
                 }
+                .hideKeyboardWhenTappedAround()
                 .navigationTitle("Tambah Koreksi")
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
@@ -522,14 +520,6 @@ struct DeviceDetailView: View {
         .onAppear {
             loadCorrections()
         }
-        .gesture(
-            DragGesture(minimumDistance: 10, coordinateSpace: .local)
-                .onEnded { value in
-                    if value.translation.height > 0 {
-                        focusedField = nil
-                    }
-                }
-        )
     }
     
     private func loadCorrections() {

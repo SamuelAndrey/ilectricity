@@ -31,7 +31,7 @@ struct MainView: View {
                         // SECTION: Estimasi
                         Section {
                             NavigationLink {
-                                // Detail view for monthly estimation
+                                EstimationDetailView()
                             } label: {
                                 HStack {
                                     VStack(alignment: .leading, spacing: 8) {
@@ -44,7 +44,7 @@ struct MainView: View {
                                                 .foregroundStyle(Color(.blue))
                                         }
                                         
-                                        Text("Rp 123.456")
+                                        Text("Rp \(EstimationHelper.totalMonthlyCost(for: devices), specifier: "%.0f")")
                                             .font(.system(size: 24, weight: .bold))
                                             .foregroundStyle(Color(.label))
                                     }
@@ -71,7 +71,7 @@ struct MainView: View {
                                             .foregroundStyle(Color(.systemOrange))
                                     }
                                     
-                                    Text("Rp 123.456")
+                                    Text("Rp \(EstimationHelper.dailyCost(for: devices), specifier: "%.0f")")
                                         .font(.system(size: 20, weight: .bold))
                                         .foregroundStyle(Color(.label))
                                 }
@@ -96,7 +96,7 @@ struct MainView: View {
                                             .foregroundStyle(Color(.systemTeal))
                                     }
                                     
-                                    Text("Rp 1.500.000")
+                                    Text("Rp \(EstimationHelper.weeklyCost(for: devices), specifier: "%.0f")")
                                         .font(.system(size: 20, weight: .bold))
                                         .foregroundStyle(Color(.label))
                                 }
@@ -230,5 +230,14 @@ struct MainView: View {
             .environmentObject(viewModel)
     } catch {
         return Text("Failed to create preview: \(error.localizedDescription)")
+    }
+}
+
+
+extension View {
+    func hideKeyboardWhenTappedAround() -> some View {
+        return self.onTapGesture {
+            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+        }
     }
 }

@@ -163,6 +163,7 @@ struct AddDeviceView: View {
                     .listStyle(.insetGrouped)
                 }
             }
+            .hideKeyboardWhenTappedAround()
             .navigationTitle("Tambah Perangkat")
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarItems(
