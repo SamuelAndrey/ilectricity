@@ -72,9 +72,9 @@ struct DeviceDetailView: View {
                                 usageUnit = device.usageUnit
                             }
                         } label: {
-                            Text(isEditing ? "Batal" : "Edit")
+                            Text(isEditing ? "Batal" : "Ubah")
                                 .textCase(.none)
-                                .foregroundStyle(Color(.systemBlue))
+                                .foregroundStyle(Color(.blue))
                                 .font(.body)
                         }
                     }
@@ -82,9 +82,14 @@ struct DeviceDetailView: View {
                     ) {
                         // Nama Perangkat
                         HStack {
-                            
-                            Text("Nama")
-                                .frame(maxWidth: .infinity, alignment: .leading)
+                            HStack {
+                                Image(systemName: "tag.fill")
+                                    .foregroundColor(Color(.systemBlue))
+                                    .font(.system(size: 16))
+                                
+                                Text("Nama")
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                            }
                             
                             
                             Spacer()
@@ -104,9 +109,15 @@ struct DeviceDetailView: View {
                         
                         // Daya
                         HStack {
-                            
-                            Text("Daya (Watt)")
-                                .frame(maxWidth: .infinity, alignment: .leading)
+                            HStack {
+                                Image(systemName: "bolt.fill")
+                                    .foregroundColor(Color(.systemYellow))
+                                    .font(.system(size: 16))
+                                
+                                Text("Daya (Watt)")
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                
+                            }
                             
                             
                             Spacer()
@@ -126,10 +137,13 @@ struct DeviceDetailView: View {
                         
                         // Lama Pakai
                         HStack {
-                            
-                            Text("Lama Pakai")
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                            
+                            HStack {
+                                Image(systemName: "timer.circle.fill")
+                                    .foregroundColor(Color(.systemTeal))
+                                    .font(.system(size: 16))
+                                Text("Lama Pakai")
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                            }
                             Spacer()
                             
                             HStack {
@@ -145,7 +159,7 @@ struct DeviceDetailView: View {
                                 }
                                 .pickerStyle(.segmented)
                                 .frame(width: 100)
-                                .accentColor(Color(.systemBlue))
+                                .accentColor(Color(.blue))
                                 .disabled(!isEditing)
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -160,6 +174,9 @@ struct DeviceDetailView: View {
                         
                         // Frekuensi
                         HStack {
+                            Image(systemName: "repeat.circle.fill")
+                                .foregroundColor(Color(.systemOrange))
+                                .font(.system(size: 16))
                             
                             Text("Frekuensi")
                             
@@ -206,99 +223,9 @@ struct DeviceDetailView: View {
                             }
                             .buttonStyle(BorderlessButtonStyle())
                         }
-                        .listRowBackground(Color(.systemBlue))
+                        .listRowBackground(Color(.blue))
                         .listRowSeparator(.hidden)
                     }
-                    
-                    // SECTION: Estimation
-                    Section(header:
-                                HStack {
-                        Text("Estimasi")
-                            .font(.title3.bold())
-                            .foregroundStyle(Color(.label))
-                            .textCase(.none)
-                        Spacer()
-                    }
-                        .padding(.bottom, 8)
-                        .padding(.top, 8)
-                    ) {
-                        let hoursPerMonth = calculateHoursPerMonth()
-                        
-                        // Usage per month
-                        HStack {
-                            HStack {
-                                Image(systemName: "clock.fill")
-                                    .foregroundColor(Color(.systemIndigo))
-                                    .font(.system(size: 16))
-                                
-                                Text("Penggunaan Bulan ini")
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                            }
-                            
-                            Spacer()
-                            
-                            Text("\(hoursPerMonth) jam")
-                                .foregroundColor(Color(.label))
-                                .font(.system(size: 15, weight: .medium))
-                        }
-                        .padding(.vertical, 4)
-                        .listRowBackground(
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(Color(.secondarySystemBackground))
-                                .padding(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
-                        )
-                        
-                        // Power consumption
-                        let powerInKwh = (Double(powerConsumption) ?? 0) / 1000 * Double(hoursPerMonth)
-                        HStack {
-                            HStack {
-                                Image(systemName: "bolt.circle.fill")
-                                    .foregroundColor(Color(.systemGreen))
-                                    .font(.system(size: 16))
-                                
-                                Text("Konsumsi Listrik")
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                            }
-                            
-                            Spacer()
-                            
-                            Text(String(format: "%.2f kWh", powerInKwh))
-                                .foregroundColor(Color(.label))
-                                .font(.system(size: 15, weight: .medium))
-                        }
-                        .padding(.vertical, 4)
-                        .listRowBackground(
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(Color(.secondarySystemBackground))
-                                .padding(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
-                        )
-                        
-                        // Cost estimate
-                        let costEstimation = powerInKwh * 1262
-                        HStack {
-                            HStack {
-                                Image(systemName: "creditcard.fill")
-                                    .foregroundColor(Color(.systemBlue))
-                                    .font(.system(size: 16))
-                                
-                                Text("Estimasi Biaya")
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                            }
-                            
-                            Spacer()
-                            
-                            Text(String(format: "Rp %.0f", costEstimation))
-                                .foregroundColor(Color(.label))
-                                .font(.system(size: 15, weight: .bold))
-                        }
-                        .padding(.vertical, 4)
-                        .listRowBackground(
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(Color(.secondarySystemBackground))
-                                .padding(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
-                        )
-                    }
-                    .listRowSeparator(.hidden)
                     
                     // SECTION: Daily History
                     Section(header:
@@ -315,7 +242,7 @@ struct DeviceDetailView: View {
                         } label: {
                             Text("Tambah")
                                 .font(.body)
-                                .foregroundStyle(Color(.systemBlue))
+                                .foregroundStyle(Color(.blue))
                                 .textCase(.none)
                         }
                         .buttonStyle(BorderlessButtonStyle())
@@ -323,6 +250,7 @@ struct DeviceDetailView: View {
                         .padding(.bottom, 8)
                         .padding(.top, 8)
                     ) {
+                        
                         if corrections.isEmpty {
                             Text("Belum ada koreksi pemakaian untuk periode ini.")
                                 .font(.footnote)
@@ -334,6 +262,7 @@ struct DeviceDetailView: View {
                                         .padding(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
                                 )
                         } else {
+                            
                             ForEach(corrections) { correction in
                                 HStack {
                                     ZStack {
@@ -367,11 +296,91 @@ struct DeviceDetailView: View {
                                         .fill(Color(.secondarySystemBackground))
                                         .padding(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
                                 )
-                            }
-                            .onDelete(perform: deleteCorrection)
+                            }.onDelete(perform: deleteCorrection)
                         }
                     }
                     .listRowSeparator(.hidden)
+                    
+                    // SECTION: Estimation
+                    Section(header:
+                                HStack {
+                        Text("Estimasi")
+                            .font(.title3.bold())
+                            .foregroundStyle(Color(.label))
+                            .textCase(.none)
+                        Spacer()
+                    }
+                        .padding(.bottom, 8)
+                        .padding(.top, 8)
+                    ) {
+                        let hoursPerMonth = calculateHoursPerMonth()
+                        
+                        // Usage per month
+                        HStack {
+                            HStack {
+                                
+                                Text("Penggunaan Bulan ini")
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                            }
+                            
+                            Spacer()
+                            
+                            Text("\(hoursPerMonth) jam")
+                                .foregroundColor(Color(.label))
+                                .font(.system(size: 15, weight: .medium))
+                        }
+                        .padding(.vertical, 4)
+                        .listRowBackground(
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(Color(.secondarySystemBackground))
+                                .padding(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
+                        )
+                        
+                        // Power consumption
+                        let powerInKwh = (Double(powerConsumption) ?? 0) / 1000 * Double(hoursPerMonth)
+                        HStack {
+                            HStack {
+                                
+                                Text("Konsumsi Listrik")
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                            }
+                            
+                            Spacer()
+                            
+                            Text(String(format: "%.2f kWh", powerInKwh))
+                                .foregroundColor(Color(.label))
+                                .font(.system(size: 15, weight: .medium))
+                        }
+                        .padding(.vertical, 4)
+                        .listRowBackground(
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(Color(.secondarySystemBackground))
+                                .padding(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
+                        )
+                        
+                        // Cost estimate
+                        let costEstimation = powerInKwh * 1262
+                        HStack {
+                            HStack {
+                                Text("Estimasi Biaya")
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                            }
+                            
+                            Spacer()
+                            
+                            Text(String(format: "Rp %.0f", costEstimation))
+                                .foregroundColor(Color(.label))
+                                .font(.system(size: 15, weight: .bold))
+                        }
+                        .padding(.vertical, 4)
+                        .listRowBackground(
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(Color(.secondarySystemBackground))
+                                .padding(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
+                        )
+                    }
+                    .listRowSeparator(.hidden)
+                    
                     
                     // SECTION: Delete Device Button
                     Section {
@@ -394,8 +403,7 @@ struct DeviceDetailView: View {
                     }
                     .listRowSeparator(.hidden)
                 }
-                .scrollContentBackground(.hidden)
-                .listStyle(.insetGrouped)
+                .scrollIndicators(.hidden)
                 
             }
         }
@@ -430,7 +438,7 @@ struct DeviceDetailView: View {
                                 HStack {
                                     HStack {
                                         Image(systemName: "calendar")
-                                            .foregroundColor(Color(.systemBlue))
+                                            .foregroundColor(Color(.blue))
                                             .font(.system(size: 16))
                                         
                                         Text("Tanggal")
@@ -474,7 +482,7 @@ struct DeviceDetailView: View {
                                     }
                                     .pickerStyle(MenuPickerStyle())
                                     .frame(width: 80)
-                                    .accentColor(Color(.systemBlue))
+                                    .accentColor(Color(.blue))
                                 }
                                 .padding(.vertical, 4)
                                 .listRowBackground(
@@ -484,7 +492,7 @@ struct DeviceDetailView: View {
                                 )
                             }.listRowSeparator(.hidden)
                         }
-                        .scrollContentBackground(.hidden)
+                        
                         .listStyle(.insetGrouped)
                         
                     }

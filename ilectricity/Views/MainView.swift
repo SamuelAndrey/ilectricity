@@ -37,21 +37,20 @@ struct MainView: View {
                                     VStack(alignment: .leading, spacing: 8) {
                                         HStack {
                                             Image(systemName: "creditcard.fill")
-                                                .foregroundStyle(Color(.systemBlue))
+                                                .foregroundStyle(Color(.blue))
                                                 .font(.system(size: 16))
                                             Text("Estimasi Tagihan Bulanan")
                                                 .font(.headline)
-                                                .foregroundStyle(Color(.systemBlue))
+                                                .foregroundStyle(Color(.blue))
                                         }
                                         
                                         Text("Rp 123.456")
                                             .font(.system(size: 24, weight: .bold))
                                             .foregroundStyle(Color(.label))
                                     }
-                                    Spacer()
                                 }
                                 .padding(.vertical, 8)
-                                .padding(.horizontal, 4)
+                                
                             }
                             .listRowBackground(
                                 RoundedRectangle(cornerRadius: 12)
@@ -76,8 +75,8 @@ struct MainView: View {
                                         .font(.system(size: 20, weight: .bold))
                                         .foregroundStyle(Color(.label))
                                 }
-                                .padding(.vertical, 1)
-                                .padding(.horizontal, 12)
+                                .padding(.vertical, 15)
+                                .padding(.horizontal, 20)
                                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
                                 
                                 .background(
@@ -143,12 +142,13 @@ struct MainView: View {
                                     HStack(spacing: 16) {
                                         ZStack {
                                             Circle()
-                                                .fill(Color(.systemGray6))
+                                                // .fill(Color(.systemGray6))
+                                                .fill(Color(.blue).opacity(0.2))
                                                 .frame(width: 40, height: 40)
-                                            
+                                                
                                             Image(systemName: DeviceIconMapper.detectIcon(for: device.name))
                                                 .font(.system(size: 18))
-                                                .foregroundColor(Color(.systemBlue))
+                                                .foregroundColor(Color(.blue))
                                         }
                                         
                                         VStack(alignment: .leading, spacing: 4) {
@@ -183,6 +183,8 @@ struct MainView: View {
                         .listRowSeparator(.hidden)
                     }
                     .scrollContentBackground(.hidden)
+                    .scrollIndicators(.hidden)
+
                     .listStyle(.insetGrouped)
                     .navigationTitle("Estimasi Tagihan")
                     .toolbar {
