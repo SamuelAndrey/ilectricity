@@ -29,6 +29,10 @@ struct DeviceDetailView: View {
     @State private var isExcess: Bool = false
     @State private var corrections: [UsageCorrection] = []
     
+    @State private var correctionToDelete: UsageCorrection?
+    @State private var isShowingCorrectionDeleteConfirmation = false
+
+    
     @State private var isEditing = false
     
     @FocusState private var focusedField: Bool
@@ -94,7 +98,7 @@ struct DeviceDetailView: View {
                             .foregroundColor(isEditing ? .primary : .secondary)
                             .focused($focusedField)
                     }
-                    .padding(.vertical, 4)
+                    .padding(.vertical, 8)
                     .listRowBackground(
                         RoundedRectangle(cornerRadius: 12)
                             .fill(Color(.secondarySystemBackground))
@@ -122,7 +126,7 @@ struct DeviceDetailView: View {
                             .foregroundColor(isEditing ? .primary : .secondary)
                             .focused($focusedField)
                     }
-                    .padding(.vertical, 4)
+                    .padding(.vertical, 8)
                     .listRowBackground(
                         RoundedRectangle(cornerRadius: 12)
                             .fill(Color(.secondarySystemBackground))
@@ -262,9 +266,8 @@ struct DeviceDetailView: View {
                         
                     } else {
                         
-                        ForEach(device.corrections ?? []) { correction in
+                        ForEach(device.corrections?.sorted(by: { $0.date > $1.date }) ?? []) { correction in
                             HStack {
-                                
                                 ZStack {
                                     Circle()
                                         .fill(correction.isExcess ? Color(.systemRed).opacity(0.2) : Color(.systemGreen).opacity(0.2))
@@ -294,9 +297,20 @@ struct DeviceDetailView: View {
                             .listRowBackground(
                                 RoundedRectangle(cornerRadius: 12)
                                     .fill(Color(.secondarySystemBackground))
-                                    .padding(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
+                                    .padding(.vertical, 4)
                             )
-                        }.onDelete(perform: deleteCorrection)
+                            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                                Button(role: .cancel) {
+                                    correctionToDelete = correction
+                                    isShowingCorrectionDeleteConfirmation = true
+                                } label: {
+                                    Image(systemName: "trash.fill")
+                                        .foregroundStyle(Color.red)
+                                }
+                                .tint(Color.clear)
+                            }
+                        }
+
                     }
                 }
                 .listRowSeparator(.hidden)
@@ -405,6 +419,21 @@ struct DeviceDetailView: View {
             Button("OK", role: .cancel) { }
         }
         
+        // confirmation dialog delete correction
+        .confirmationDialog("Apakah Anda yakin ingin menghapus koreksi ini?", isPresented: $isShowingCorrectionDeleteConfirmation, titleVisibility: .visible) {
+            Button("Hapus", role: .destructive) {
+                if let correction = correctionToDelete {
+                    modelContext.delete(correction)
+                    try? modelContext.save()
+                    correctionToDelete = nil
+                }
+            }
+            
+            Button("Batal", role: .cancel) {
+                correctionToDelete = nil
+            }
+        }
+
         
         // Sheet for adding corrections
         .sheet(isPresented: $isShowingCorrectionSheet) {
@@ -476,11 +505,6 @@ struct DeviceDetailView: View {
         }
     }
     
-    // Fungsi untuk menghapus koreksi
-//    private func deleteCorrection(at offsets: IndexSet) {
-//        viewModel.deleteCorrection(at: offsets, from: device)
-//        loadCorrections()
-//    }
     
     private func deleteCorrection(at offsets: IndexSet) {
         guard let correctionsArray = device.corrections else { return }
@@ -489,8 +513,7 @@ struct DeviceDetailView: View {
             let correctionToDelete = correctionsArray[index]
             modelContext.delete(correctionToDelete)
         }
-        
-        // Opsional: Save perubahan ke model
+      
         try? modelContext.save()
     }
 

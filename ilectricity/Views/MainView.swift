@@ -177,8 +177,8 @@ struct MainView: View {
                                         .fill(Color(.secondarySystemBackground))
                                         .padding(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
                                 )
-                                .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                                    Button(role: .destructive) {
+                                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                                    Button(role: .cancel) {
                                         deviceToDelete = device
                                         isShowingDeleteConfirmation = true
                                     } label: {

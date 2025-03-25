@@ -51,9 +51,9 @@ struct AddDeviceView: View {
                                 TextField("Nama perangkat", text: $name)
                                     .focused($isNameFieldFocused)
                                     .focused($focusedField, equals: .name)
-                                    .padding(.vertical, 4)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                             }
+                            .padding(.vertical, 8)
                             .listRowBackground(
                                 RoundedRectangle(cornerRadius: 12)
                                     .fill(Color(.secondarySystemBackground))
@@ -77,9 +77,9 @@ struct AddDeviceView: View {
                                     .keyboardType(.numberPad)
                                     .focused($focusedField, equals: .power)
                                     .frame(maxWidth: .infinity, alignment: .leading)
-                            
+                                
                             }
-                            .padding(.vertical, 4)
+                            .padding(.vertical, 8)
                             .listRowBackground(
                                 RoundedRectangle(cornerRadius: 12)
                                     .fill(Color(.secondarySystemBackground))
@@ -104,6 +104,7 @@ struct AddDeviceView: View {
                                         .keyboardType(.numberPad)
                                         .focused($focusedField, equals: .duration)
                                         .frame(maxWidth: .infinity, alignment: .leading)
+                                        .padding(.vertical, 8)
                                     
                                 }.padding(.bottom, 10)
                                 
@@ -112,36 +113,11 @@ struct AddDeviceView: View {
                                     Text("Menit").tag(UsageUnit.minutes)
                                 }
                                 .pickerStyle(.segmented)
-                            }
-                            .padding(.vertical, 4)
-                            .listRowBackground(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .fill(Color(.secondarySystemBackground))
-                                    .padding(EdgeInsets(top: 4, leading: 0, bottom: 0, trailing: 0))
-                            )
-
-                            Text("Durasi pemakaian adalah waktu yang dihabiskan perangkat dalam satu hari.")
-                                .font(.footnote)
-                                .foregroundColor(Color(.secondaryLabel))
-                                .listRowBackground(Color.clear)
-
-
-                            // Frekuensi
-                            HStack {
-                                Image(systemName: "repeat.circle.fill")
-                                    .foregroundColor(Color(.systemOrange))
-                                    .font(.system(size: 16))
-                                Text("Frekuensi")
-                                Picker("", selection: $frequencyPerMonth) {
-                                    ForEach(1...31, id: \.self) { day in
-                                        Text("\(day)").tag(day)
-                                    }
-                                }
-                                .pickerStyle(.wheel)
-                                .frame(width: 80, height: 100)
-                                .clipped()
-                                Text("Hari per bulan")
-                                    .foregroundColor(Color(.systemGray))
+                                
+                                Text("Durasi pemakaian adalah waktu yang dihabiskan perangkat dalam satu hari.")
+                                    .font(.footnote)
+                                    .foregroundColor(Color(.secondaryLabel))
+                                
                             }
                             .padding(.vertical, 4)
                             .listRowBackground(
@@ -149,13 +125,46 @@ struct AddDeviceView: View {
                                     .fill(Color(.secondarySystemBackground))
                                     .padding(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
                             )
-
-                            Text("Frekuensi pemakaian adalah jumlah hari perangkat digunakan dalam satu bulan.")
-                                .font(.footnote)
-                                .foregroundColor(Color(.secondaryLabel))
-                                .listRowBackground(Color.clear)
-
-
+                            
+                            
+                            
+                            
+                            // Frekuensi
+                            VStack {
+                                HStack {
+                                    
+                                    Image(systemName: "repeat.circle.fill")
+                                        .foregroundColor(Color(.systemOrange))
+                                        .font(.system(size: 16))
+                                    Text("Frekuensi")
+                                    Picker("", selection: $frequencyPerMonth) {
+                                        ForEach(1...31, id: \.self) { day in
+                                            Text("\(day)").tag(day)
+                                        }
+                                    }
+                                    .pickerStyle(.wheel)
+                                    .frame(width: 80, height: 100)
+                                    .clipped()
+                                    Text("Hari per bulan")
+                                        .foregroundColor(Color(.systemGray))
+                                    
+                                    
+                                }
+                                Text("Frekuensi pemakaian adalah jumlah hari perangkat digunakan dalam satu bulan.")
+                                    .font(.footnote)
+                                    .foregroundColor(Color(.secondaryLabel))
+                                
+                            }
+                            .padding(.vertical, 4)
+                            .listRowBackground(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(Color(.secondarySystemBackground))
+                                    .padding(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
+                            )
+                            
+                            
+                            
+                            
                         }
                         .listRowSeparator(.hidden)
                     }
@@ -182,8 +191,8 @@ struct AddDeviceView: View {
                         isPresented = false
                     }
                 }
-                .disabled(name.isEmpty || powerConsumption == nil || usageDuration == nil)
-                .font(.headline)
+                    .disabled(name.isEmpty || powerConsumption == nil || usageDuration == nil)
+                    .font(.headline)
             )
             .onAppear {
                 isNameFieldFocused = true
@@ -197,8 +206,8 @@ struct AddDeviceView: View {
                     }
                 }
             }
-
-
+            
+            
             .scrollDismissesKeyboard(.interactively)
             .gesture(
                 DragGesture(minimumDistance: 10, coordinateSpace: .local)
