@@ -18,7 +18,7 @@ final class Device {
     var usageUnit: UsageUnit
     
     @Relationship(deleteRule: .cascade)
-        var corrections: [UsageCorrection]?
+    var corrections: [UsageCorrection]?
     
     init(name: String, powerConsumption: Int, usageDuration: Int, frequencyPerMonth: Int, usageUnit: UsageUnit) {
         self.id = UUID()
@@ -28,6 +28,24 @@ final class Device {
         self.frequencyPerMonth = frequencyPerMonth
         self.usageUnit = usageUnit
     }
+    
+        var totalMonthlyUsageInHours: Double {
+            
+            let dailyUsageInHours = usageUnit == .minutes ? Double(usageDuration) / 60.0 : Double(usageDuration)
+            
+            // Total hari tanpa koreksi
+            let correctionCount = corrections?.count ?? 0
+            let correctedRegularUsage = dailyUsageInHours * Double(max(frequencyPerMonth - correctionCount, 0))
+            
+            // Total jam dari koreksi secara eksplisit
+            let correctionsUsageInHours = corrections?.reduce(0.0) { total, correction in
+                let durationInHours = correction.usageUnit == .minutes ? correction.correction / 60.0 : correction.correction
+                return total + durationInHours
+            } ?? 0.0
+            
+            // Total jam keseluruhan (regular + koreksi)
+            return correctedRegularUsage + correctionsUsageInHours
+        }
 }
 
 

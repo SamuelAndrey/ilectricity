@@ -31,11 +31,7 @@ struct DeviceDetailView: View {
     
     @State private var isEditing = false
     
-    @FocusState private var focusedField: FocusField?
-    
-    enum FocusField {
-        case name, power, duration, frequency, correction
-    }
+    @FocusState private var focusedField: Bool
     
     init(device: Device) {
         self.device = device
@@ -47,7 +43,7 @@ struct DeviceDetailView: View {
     }
     
     var body: some View {
-      
+        
         VStack {
             List {
                 // SECTION: Device Details
@@ -93,10 +89,10 @@ struct DeviceDetailView: View {
                         Spacer()
                         
                         TextField("Nama perangkat", text: $name)
-                            .focused($focusedField, equals: .name)
                             .disabled(!isEditing)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .foregroundColor(isEditing ? .primary : .secondary)
+                            .focused($focusedField)
                     }
                     .padding(.vertical, 4)
                     .listRowBackground(
@@ -121,10 +117,10 @@ struct DeviceDetailView: View {
                         Spacer()
                         
                         TextField("Daya", text: $powerConsumption)
-                            .focused($focusedField, equals: .power)
                             .disabled(!isEditing)
                             .keyboardType(.decimalPad)
                             .foregroundColor(isEditing ? .primary : .secondary)
+                            .focused($focusedField)
                     }
                     .padding(.vertical, 4)
                     .listRowBackground(
@@ -146,10 +142,10 @@ struct DeviceDetailView: View {
                         
                         HStack {
                             TextField("Lama", text: $usageDuration)
-                                .focused($focusedField, equals: .duration)
                                 .disabled(!isEditing)
                                 .keyboardType(.numberPad)
                                 .foregroundColor(isEditing ? .primary : .secondary)
+                                .focused($focusedField)
                             
                             Picker("", selection: $usageUnit) {
                                 Text("Jam").tag(UsageUnit.hours)
@@ -266,9 +262,9 @@ struct DeviceDetailView: View {
                         
                     } else {
                         
-                        ForEach(corrections) { correction in
+                        ForEach(device.corrections ?? []) { correction in
                             HStack {
-                            
+                                
                                 ZStack {
                                     Circle()
                                         .fill(correction.isExcess ? Color(.systemRed).opacity(0.2) : Color(.systemGreen).opacity(0.2))
@@ -307,29 +303,44 @@ struct DeviceDetailView: View {
                 
                 // SECTION: Estimation
                 Section(header:
-                            HStack {
-                    Text("Estimasi")
-                        .font(.title3.bold())
-                        .foregroundStyle(Color(.label))
-                        .textCase(.none)
-                    Spacer()
-                }
+                    HStack {
+                        Text("Estimasi")
+                            .font(.title3.bold())
+                            .foregroundStyle(Color(.label))
+                            .textCase(.none)
+                        Spacer()
+                    }
                     .padding(.bottom, 8)
                     .padding(.top, 8)
                 ) {
-                    let hoursPerMonth = calculateHoursPerMonth()
-                    
-                    // Usage per month
+
+                    // Penggunaan Bulan ini (durasi total)
                     HStack {
-                        HStack {
-                            
-                            Text("Penggunaan Bulan ini")
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                        }
-                        
+                        Text("Penggunaan Bulan Ini")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+
                         Spacer()
-                        
-                        Text("\(hoursPerMonth) jam")
+
+                        Text("\(device.totalMonthlyUsageInHours, specifier: "%.2f") Jam")
+                            .foregroundColor(Color(.label))
+                            .font(.system(size: 15, weight: .medium))
+
+                    }
+                    .padding(.vertical, 4)
+                    .listRowBackground(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(Color(.secondarySystemBackground))
+                            .padding(.vertical, 4)
+                    )
+
+                    // Konsumsi listrik dalam kWh
+                    HStack {
+                        Text("Konsumsi Listrik")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+
+                        Spacer()
+
+                        Text("\(EstimationHelper.monthlyEnergy(for: device), specifier: "%.2f") kWh")
                             .foregroundColor(Color(.label))
                             .font(.system(size: 15, weight: .medium))
                     }
@@ -337,42 +348,17 @@ struct DeviceDetailView: View {
                     .listRowBackground(
                         RoundedRectangle(cornerRadius: 12)
                             .fill(Color(.secondarySystemBackground))
-                            .padding(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
+                            .padding(.vertical, 4)
                     )
-                    
-                    // Power consumption
-                    let powerInKwh = (Double(powerConsumption) ?? 0) / 1000 * Double(hoursPerMonth)
+
+                    // Estimasi biaya listrik bulanan untuk perangkat ini
                     HStack {
-                        HStack {
-                            
-                            Text("Konsumsi Listrik")
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                        }
-                        
+                        Text("Estimasi Biaya")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+
                         Spacer()
-                        
-                        Text(String(format: "%.2f kWh", powerInKwh))
-                            .foregroundColor(Color(.label))
-                            .font(.system(size: 15, weight: .medium))
-                    }
-                    .padding(.vertical, 4)
-                    .listRowBackground(
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(Color(.secondarySystemBackground))
-                            .padding(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
-                    )
-                    
-                    // Cost estimate
-                    let costEstimation = powerInKwh * 1262
-                    HStack {
-                        HStack {
-                            Text("Estimasi Biaya")
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                        }
-                        
-                        Spacer()
-                        
-                        Text(String(format: "Rp %.0f", costEstimation))
+
+                        Text("Rp \(EstimationHelper.estimatedCost(for: device), specifier: "%.0f")")
                             .foregroundColor(Color(.label))
                             .font(.system(size: 15, weight: .bold))
                     }
@@ -380,10 +366,11 @@ struct DeviceDetailView: View {
                     .listRowBackground(
                         RoundedRectangle(cornerRadius: 12)
                             .fill(Color(.secondarySystemBackground))
-                            .padding(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
+                            .padding(.vertical, 4)
                     )
                 }
                 .listRowSeparator(.hidden)
+
                 
                 
                 // SECTION: Delete Device Button
@@ -421,101 +408,13 @@ struct DeviceDetailView: View {
         
         // Sheet for adding corrections
         .sheet(isPresented: $isShowingCorrectionSheet) {
-            NavigationView {
-                ZStack {
-                    VStack {
-                        Form {
-                            Section(header: Text("Data Koreksi")
-                                .font(.headline)
-                                .foregroundColor(Color(.label))
-                                .textCase(.none)
-                                .padding(.bottom, 8)
-                            ) {
-                                // Date
-                                HStack {
-                                    HStack {
-                                        Image(systemName: "calendar")
-                                            .foregroundColor(Color(.blue))
-                                            .font(.system(size: 16))
-                                        
-                                        Text("Tanggal")
-                                            .frame(maxWidth: .infinity, alignment: .leading)
-                                    }
-                                    
-                                    Spacer()
-                                    
-                                    DatePicker("", selection: $correctionDate, displayedComponents: .date)
-                                        .labelsHidden()
-                                }
-                                .padding(.vertical, 4)
-                                .listRowBackground(
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .fill(Color(.secondarySystemBackground))
-                                        .padding(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
-                                )
-                                
-                                // Usage time
-                                HStack {
-                                    HStack {
-                                        Image(systemName: "timer.circle.fill")
-                                            .foregroundColor(Color(.systemTeal))
-                                            .font(.system(size: 16))
-                                        
-                                        Text("Lama Pakai")
-                                            .frame(maxWidth: .infinity, alignment: .leading)
-                                    }
-                                    
-                                    Spacer()
-                                    
-                                    TextField("Lama", text: $correctionValue)
-                                        .focused($focusedField, equals: .correction)
-                                        .multilineTextAlignment(.trailing)
-                                        .keyboardType(.decimalPad)
-                                        .frame(width: 80)
-                                    
-                                    Picker("", selection: $correctionUnit) {
-                                        Text("Jam").tag(UsageUnit.hours)
-                                        Text("Menit").tag(UsageUnit.minutes)
-                                    }
-                                    .pickerStyle(MenuPickerStyle())
-                                    .frame(width: 80)
-                                    .accentColor(Color(.blue))
-                                }
-                                .padding(.vertical, 4)
-                                .listRowBackground(
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .fill(Color(.secondarySystemBackground))
-                                        .padding(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
-                                )
-                            }.listRowSeparator(.hidden)
-                        }
-                        
-                        .listStyle(.insetGrouped)
-                        
-                    }
-                }
-                .hideKeyboardWhenTappedAround()
-                .navigationTitle("Tambah Koreksi")
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .cancellationAction) {
-                        Button("Batal") {
-                            isShowingCorrectionSheet = false
-                        }
-                    }
-                    
-                    ToolbarItem(placement: .confirmationAction) {
-                        Button("Simpan") {
-                            addCorrection()
-                            isShowingCorrectionSheet = false
-                        }
-                        .font(.headline)
-                        .disabled(correctionValue.isEmpty || Double(correctionValue) == 0)
-                    }
-                }
-            }
-            .presentationDetents([.large])
-            .presentationDragIndicator(.visible)
+            UsageCorrectionSheet(
+                isShowingCorrectionSheet: $isShowingCorrectionSheet,
+                correctionDate: $correctionDate,
+                correctionValue: $correctionValue,
+                correctionUnit: $correctionUnit,
+                onSave: addCorrection
+            )
         }
         .onAppear {
             loadCorrections()
@@ -526,12 +425,6 @@ struct DeviceDetailView: View {
         corrections = device.corrections?.sorted(by: { $0.date > $1.date }) ?? []
     }
     
-    private func calculateHoursPerMonth() -> Int {
-        let duration = Int(usageDuration) ?? 0
-        let frequency = Int(frequencyPerMonth) ?? 0
-        return usageUnit == .hours ? duration * frequency : (duration * frequency) / 60
-    }
-    
     private func saveChanges() {
         device.name = name
         device.powerConsumption = Int(powerConsumption) ?? 0
@@ -540,7 +433,6 @@ struct DeviceDetailView: View {
         device.usageUnit = usageUnit
         
         viewModel.saveChanges()
-        focusedField = nil
         showSuccessAlert = true
     }
     
@@ -585,10 +477,23 @@ struct DeviceDetailView: View {
     }
     
     // Fungsi untuk menghapus koreksi
+//    private func deleteCorrection(at offsets: IndexSet) {
+//        viewModel.deleteCorrection(at: offsets, from: device)
+//        loadCorrections()
+//    }
+    
     private func deleteCorrection(at offsets: IndexSet) {
-        viewModel.deleteCorrection(at: offsets, from: device)
-        loadCorrections()
+        guard let correctionsArray = device.corrections else { return }
+        
+        for index in offsets {
+            let correctionToDelete = correctionsArray[index]
+            modelContext.delete(correctionToDelete)
+        }
+        
+        // Opsional: Save perubahan ke model
+        try? modelContext.save()
     }
+
 }
 
 

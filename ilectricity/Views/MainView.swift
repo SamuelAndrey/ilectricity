@@ -6,7 +6,9 @@ struct MainView: View {
     @Query private var devices: [Device]
     @EnvironmentObject private var viewModel: DeviceViewModel
     
+    @State private var deviceToDelete: Device?
     @State private var isShowingAddDeviceSheet = false
+    @State private var isShowingDeleteConfirmation = false
     
     var body: some View {
         NavigationView {
@@ -44,7 +46,7 @@ struct MainView: View {
                                                 .foregroundStyle(Color(.blue))
                                         }
                                         
-                                        Text("Rp \(EstimationHelper.totalMonthlyCost(for: devices), specifier: "%.0f")")
+                                        Text("Rp \(EstimationHelper.overallMonthlyCost(for: devices, demandCharges: 61_763), specifier: "%.0f")")
                                             .font(.system(size: 24, weight: .bold))
                                             .foregroundStyle(Color(.label))
                                     }
@@ -71,7 +73,7 @@ struct MainView: View {
                                             .foregroundStyle(Color(.systemOrange))
                                     }
                                     
-                                    Text("Rp \(EstimationHelper.dailyCost(for: devices), specifier: "%.0f")")
+                                    Text("Rp \(EstimationHelper.overallDailyCost(for: devices, demandCharges: 61_763), specifier: "%.0f")")
                                         .font(.system(size: 20, weight: .bold))
                                         .foregroundStyle(Color(.label))
                                 }
@@ -96,12 +98,12 @@ struct MainView: View {
                                             .foregroundStyle(Color(.systemTeal))
                                     }
                                     
-                                    Text("Rp \(EstimationHelper.weeklyCost(for: devices), specifier: "%.0f")")
+                                    Text("Rp \(EstimationHelper.overallWeeklyCost(for: devices, demandCharges: 61_763), specifier: "%.0f")")
                                         .font(.system(size: 20, weight: .bold))
                                         .foregroundStyle(Color(.label))
                                 }
                                 .padding(.vertical, 15)
-                                .padding(.horizontal, 12)
+                                .padding(.horizontal, 20)
                                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
                                 .background(
                                     RoundedRectangle(cornerRadius: 12)
@@ -114,10 +116,9 @@ struct MainView: View {
                             .listRowInsets(EdgeInsets())
                             
                         }.listRowSeparator(.hidden)
-                        
                         // SECTION: Perangkat
                         Section(header:
-                            HStack {
+                                    HStack {
                             Text("Perangkat yang Digunakan")
                                 .font(.title3.bold())
                                 .foregroundStyle(Color(.label))
@@ -142,10 +143,9 @@ struct MainView: View {
                                     HStack(spacing: 16) {
                                         ZStack {
                                             Circle()
-                                                // .fill(Color(.systemGray6))
                                                 .fill(Color(.blue).opacity(0.2))
                                                 .frame(width: 40, height: 40)
-                                                
+                                            
                                             Image(systemName: DeviceIconMapper.detectIcon(for: device.name))
                                                 .font(.system(size: 18))
                                                 .foregroundColor(Color(.blue))
@@ -177,14 +177,23 @@ struct MainView: View {
                                         .fill(Color(.secondarySystemBackground))
                                         .padding(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
                                 )
+                                .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                                    Button(role: .destructive) {
+                                        deviceToDelete = device
+                                        isShowingDeleteConfirmation = true
+                                    } label: {
+                                        
+                                        Image(systemName: "trash.fill")
+                                            .foregroundStyle(Color.red)
+                                    }
+                                    .tint(Color.clear)
+                                }
                             }
-                            .onDelete(perform: deleteDevices)
                         }
                         .listRowSeparator(.hidden)
                     }
                     .scrollContentBackground(.hidden)
                     .scrollIndicators(.hidden)
-
                     .listStyle(.insetGrouped)
                     .navigationTitle("Estimasi Tagihan")
                     .toolbar {
@@ -201,14 +210,18 @@ struct MainView: View {
                 .sheet(isPresented: $isShowingAddDeviceSheet) {
                     AddDeviceView(isPresented: $isShowingAddDeviceSheet)
                 }
-            }
-        }
-    }
-    
-    private func deleteDevices(offsets: IndexSet) {
-        withAnimation {
-            for index in offsets {
-                viewModel.deleteDevice(devices[index])
+                .confirmationDialog("Apakah Anda yakin ingin menghapus perangkat ini?", isPresented: $isShowingDeleteConfirmation, titleVisibility: .visible) {
+                    Button("Hapus", role: .destructive) {
+                        if let device = deviceToDelete {
+                            viewModel.deleteDevice(device)
+                            deviceToDelete = nil
+                        }
+                    }
+                    
+                    Button("Batal", role: .cancel) {
+                        deviceToDelete = nil
+                    }
+                }
             }
         }
     }

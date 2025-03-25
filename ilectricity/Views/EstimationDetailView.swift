@@ -11,44 +11,66 @@ import SwiftData
 struct EstimationDetailView: View {
     @Query private var devices: [Device]
     
-    // Misalnya ingin menambahkan pajak/admin
-    private let additionalCosts = 0.0 // tinggal isi manual
-    
-    var sortedDevices: [Device] {
+    private let demandCharges = 61_763.0
+
+    private var pju: Double {
+        ((EstimationHelper.totalMonthlyCost(for: devices)) + demandCharges) * 0.08
+    }
+
+    private var additionalCosts: Double {
+        demandCharges + pju
+    }
+
+    private var sortedDevices: [Device] {
         devices.sorted {
             EstimationHelper.estimatedCost(for: $0) > EstimationHelper.estimatedCost(for: $1)
         }
     }
     
     var body: some View {
+     
         List {
-            Section("Detail Pemakaian Perangkat") {
+            Section("DETAIL PEMAKAIAN PERANGKAT") {
                 ForEach(sortedDevices) { device in
                     VStack(alignment: .leading, spacing: 4) {
-                        Text(device.name).font(.headline)
+                        HStack {
+                            Text(device.name).font(.headline).bold()
+                            
+                            Spacer()
+                            
+                            Text("\(EstimationHelper.monthlyEnergy(for: device), specifier: "%.2f") kWh")
+                                .font(.subheadline)
+                        }
                         
-                        Text("\(EstimationHelper.monthlyEnergy(for: device), specifier: "%.2f") kWh • Rp \(EstimationHelper.estimatedCost(for: device), specifier: "%.0f")")
+                        
+                        Text("Rp \(EstimationHelper.estimatedCost(for: device), specifier: "%.0f")")
                             .font(.subheadline)
                     }
-                    .padding(.vertical, 4)
+                   
                 }
             }
             
-            Section("Total Keseluruhan") {
+            Section("TOTAL ESTIMASI BULANAN") {
                 HStack {
                     Text("Total Energi")
                     Spacer()
                     Text("\(EstimationHelper.totalMonthlyEnergy(for: devices), specifier: "%.2f") kWh")
                 }
+                .listRowBackground(Color(.secondarySystemBackground))
                 HStack {
                     Text("Total Biaya Perangkat")
                     Spacer()
                     Text("Rp \(EstimationHelper.totalMonthlyCost(for: devices), specifier: "%.0f")")
                 }
                 HStack {
-                    Text("Biaya Lain-lain")
+                    Text("Biaya Beban")
                     Spacer()
-                    Text("Rp \(additionalCosts, specifier: "%.0f")")
+                    Text("Rp \(demandCharges, specifier: "%.0f")")
+                }
+                HStack {
+                    Text("PJU 8%")
+                    Spacer()
+                    Text("Rp \(pju, specifier: "%.0f")")
                 }
                 HStack {
                     Text("Total Keseluruhan")
@@ -56,10 +78,11 @@ struct EstimationDetailView: View {
                     Spacer()
                     Text("Rp \(EstimationHelper.totalMonthlyCost(for: devices, additionalCost: additionalCosts), specifier: "%.0f")")
                         .bold()
-                }
+                }.listRowBackground(Color(.secondarySystemBackground))
             }
         }
-        .navigationTitle("Rincian Estimasi")
+        .listStyle(.plain)
+        .navigationTitle("Detail Estimasi")
         .navigationBarTitleDisplayMode(.inline)
     }
 }

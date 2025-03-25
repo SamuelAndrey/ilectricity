@@ -10,7 +10,6 @@ import Foundation
 struct EstimationHelper {
     
     static let electricityTariffPerKwh = 1_262.0
-    static let demandCharges = 66_704.0
     
     
     /// Menghitung konsumsi energi per hari (dalam kWh)
@@ -64,5 +63,24 @@ struct EstimationHelper {
     /// Rata-rata biaya mingguan
     static func weeklyCost(for devices: [Device], additionalCost: Double = 0.0) -> Double {
         dailyCost(for: devices, additionalCost: additionalCost) * 7.0
+    }
+    
+    
+    
+    
+    /// Total Biaya Keseluruhan (termasuk Biaya Beban dan PJU)
+    static func overallMonthlyCost(for devices: [Device], demandCharges: Double) -> Double {
+        let pju = (totalMonthlyCost(for: devices) + demandCharges) * 0.08
+        return totalMonthlyCost(for: devices) + demandCharges + pju
+    }
+    
+    /// Biaya Harian Keseluruhan
+    static func overallDailyCost(for devices: [Device], demandCharges: Double) -> Double {
+        overallMonthlyCost(for: devices, demandCharges: demandCharges) / 30.0
+    }
+    
+    /// Biaya Mingguan Keseluruhan
+    static func overallWeeklyCost(for devices: [Device], demandCharges: Double) -> Double {
+        overallDailyCost(for: devices, demandCharges: demandCharges) * 7.0
     }
 }
