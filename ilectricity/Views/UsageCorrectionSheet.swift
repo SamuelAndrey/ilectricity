@@ -44,7 +44,7 @@ struct UsageCorrectionSheet: View {
                                 DatePicker("", selection: $correctionDate, displayedComponents: .date)
                                     .labelsHidden()
                             }
-                            .padding(.vertical, 4)
+                            .padding(.vertical, 3)
                             .listRowBackground(
                                 RoundedRectangle(cornerRadius: 12)
                                     .fill(Color(.secondarySystemBackground))
@@ -64,19 +64,21 @@ struct UsageCorrectionSheet: View {
                                 
                                 Spacer()
                                 
-                                TextField("Lama", text: $correctionValue)
-                                    .multilineTextAlignment(.trailing)
-                                    .keyboardType(.decimalPad)
-                                    .frame(width: 80)
-                                    .focused($focusedField)
-                                
-                                Picker("", selection: $correctionUnit) {
-                                    Text("Jam").tag(UsageUnit.hours)
-                                    Text("Menit").tag(UsageUnit.minutes)
+                                HStack {
+                                    TextField("Lama", text: $correctionValue)
+                                        .keyboardType(.numberPad)
+                                        .focused($focusedField)
+                                    
+                                    Picker("", selection: $correctionUnit) {
+                                        Text("Jam").tag(UsageUnit.hours)
+                                        Text("Menit").tag(UsageUnit.minutes)
+                                    }
+                                    .pickerStyle(SegmentedPickerStyle())
+                                    .frame(width: 100)
+                                    .accentColor(Color(.blue))
                                 }
-                                .pickerStyle(MenuPickerStyle())
-                                .frame(width: 80)
-                                .accentColor(Color(.blue))
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                               
                             }
                             .padding(.vertical, 4)
                             .listRowBackground(

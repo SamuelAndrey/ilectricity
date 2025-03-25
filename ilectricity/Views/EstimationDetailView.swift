@@ -34,17 +34,14 @@ struct EstimationDetailView: View {
                 ForEach(sortedDevices) { device in
                     VStack(alignment: .leading, spacing: 4) {
                         HStack {
-                            Text(device.name).font(.headline).bold()
+                            Text(device.name).bold()
                             
                             Spacer()
                             
                             Text("\(EstimationHelper.monthlyEnergy(for: device), specifier: "%.2f") kWh")
-                                .font(.subheadline)
                         }
                         
-                        
                         Text("Rp \(EstimationHelper.estimatedCost(for: device), specifier: "%.0f")")
-                            .font(.subheadline)
                     }
                    
                 }
@@ -57,6 +54,7 @@ struct EstimationDetailView: View {
                     Text("\(EstimationHelper.totalMonthlyEnergy(for: devices), specifier: "%.2f") kWh")
                 }
                 .listRowBackground(Color(.secondarySystemBackground))
+                
                 HStack {
                     Text("Total Biaya Perangkat")
                     Spacer()
@@ -78,7 +76,8 @@ struct EstimationDetailView: View {
                     Spacer()
                     Text("Rp \(EstimationHelper.totalMonthlyCost(for: devices, additionalCost: additionalCosts), specifier: "%.0f")")
                         .bold()
-                }.listRowBackground(Color(.secondarySystemBackground))
+                }
+                .listRowBackground(Color(.secondarySystemBackground))
             }
         }
         .listStyle(.plain)

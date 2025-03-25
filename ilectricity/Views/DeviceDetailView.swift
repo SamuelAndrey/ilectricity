@@ -48,7 +48,8 @@ struct DeviceDetailView: View {
     
     var body: some View {
         
-        VStack {
+        ZStack {
+            
             List {
                 // SECTION: Device Details
                 Section(header: HStack {
@@ -81,9 +82,7 @@ struct DeviceDetailView: View {
                     // Nama Perangkat
                     HStack {
                         HStack {
-                            Image(systemName: "tag.fill")
-                                .foregroundColor(Color(.systemBlue))
-                                .font(.system(size: 16))
+                            
                             
                             Text("Nama")
                                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -98,25 +97,16 @@ struct DeviceDetailView: View {
                             .foregroundColor(isEditing ? .primary : .secondary)
                             .focused($focusedField)
                     }
-                    .padding(.vertical, 8)
-                    .listRowBackground(
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(Color(.secondarySystemBackground))
-                            .padding(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
-                    )
+                
                     
                     // Daya
                     HStack {
                         HStack {
-                            Image(systemName: "bolt.fill")
-                                .foregroundColor(Color(.systemYellow))
-                                .font(.system(size: 16))
+                           
                             
                             Text("Daya (Watt)")
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                            
                         }
-                        
                         
                         Spacer()
                         
@@ -126,21 +116,15 @@ struct DeviceDetailView: View {
                             .foregroundColor(isEditing ? .primary : .secondary)
                             .focused($focusedField)
                     }
-                    .padding(.vertical, 8)
-                    .listRowBackground(
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(Color(.secondarySystemBackground))
-                            .padding(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
-                    )
+                    
                     
                     // Lama Pakai
                     HStack {
                         HStack {
-                            Image(systemName: "timer.circle.fill")
-                                .foregroundColor(Color(.systemTeal))
-                                .font(.system(size: 16))
+                           
                             Text("Lama Pakai")
                                 .frame(maxWidth: .infinity, alignment: .leading)
+                                
                         }
                         Spacer()
                         
@@ -163,18 +147,11 @@ struct DeviceDetailView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         
                     }
-                    .padding(.vertical, 4)
-                    .listRowBackground(
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(Color(.secondarySystemBackground))
-                            .padding(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
-                    )
+                    
                     
                     // Frekuensi
                     HStack {
-                        Image(systemName: "repeat.circle.fill")
-                            .foregroundColor(Color(.systemOrange))
-                            .font(.system(size: 16))
+                        
                         
                         Text("Frekuensi")
                         
@@ -199,13 +176,9 @@ struct DeviceDetailView: View {
                         
                         
                     }
-                    .listRowBackground(
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(Color(.secondarySystemBackground))
-                            .padding(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
-                    )
+                    
                 }
-                .listRowSeparator(.hidden)
+                
                 
                 // SECTION: Save Changes Button
                 if isEditing {
@@ -340,12 +313,6 @@ struct DeviceDetailView: View {
                             .font(.system(size: 15, weight: .medium))
 
                     }
-                    .padding(.vertical, 4)
-                    .listRowBackground(
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(Color(.secondarySystemBackground))
-                            .padding(.vertical, 4)
-                    )
 
                     // Konsumsi listrik dalam kWh
                     HStack {
@@ -358,12 +325,7 @@ struct DeviceDetailView: View {
                             .foregroundColor(Color(.label))
                             .font(.system(size: 15, weight: .medium))
                     }
-                    .padding(.vertical, 4)
-                    .listRowBackground(
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(Color(.secondarySystemBackground))
-                            .padding(.vertical, 4)
-                    )
+                    
 
                     // Estimasi biaya listrik bulanan untuk perangkat ini
                     HStack {
@@ -376,15 +338,7 @@ struct DeviceDetailView: View {
                             .foregroundColor(Color(.label))
                             .font(.system(size: 15, weight: .bold))
                     }
-                    .padding(.vertical, 4)
-                    .listRowBackground(
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(Color(.secondarySystemBackground))
-                            .padding(.vertical, 4)
-                    )
                 }
-                .listRowSeparator(.hidden)
-
                 
                 
                 // SECTION: Delete Device Button
