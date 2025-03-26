@@ -41,14 +41,20 @@ struct MainView: View {
                                             Image(systemName: "creditcard.fill")
                                                 .foregroundStyle(Color(.blue))
                                                 .font(.system(size: 16))
-                                            Text("Estimasi Tagihan Bulanan")
+                                            Text("Estimasi Bulanan")
                                                 .font(.headline)
                                                 .foregroundStyle(Color(.blue))
                                         }
                                         
-                                        Text("Rp \(EstimationHelper.overallMonthlyCost(for: devices, demandCharges: 61_763), specifier: "%.0f")")
-                                            .font(.system(size: 24, weight: .bold))
-                                            .foregroundStyle(Color(.label))
+                                        Text(
+                                            devices.isEmpty
+                                                ? "Rp 0"
+                                                : "Rp \(EstimationHelper.overallMonthlyCost(for: devices, demandCharges: 61_763), specifier: "%.0f")"
+                                        )
+                                        .font(.system(size: 24, weight: .bold))
+                                        .foregroundStyle(Color(.label))
+                                        
+                                        
                                     }
                                 }
                                 .padding(.vertical, 8)
@@ -73,9 +79,10 @@ struct MainView: View {
                                             .foregroundStyle(Color(.systemOrange))
                                     }
                                     
-                                    Text("Rp \(EstimationHelper.overallDailyCost(for: devices, demandCharges: 61_763), specifier: "%.0f")")
+                                    Text(devices.isEmpty ? "Rp 0" : "Rp \(EstimationHelper.overallDailyCost(for: devices, demandCharges: 61_763), specifier: "%.0f")")
                                         .font(.system(size: 20, weight: .bold))
                                         .foregroundStyle(Color(.label))
+                                    
                                 }
                                 .padding(.vertical, 15)
                                 .padding(.horizontal, 20)
@@ -98,9 +105,11 @@ struct MainView: View {
                                             .foregroundStyle(Color(.systemTeal))
                                     }
                                     
-                                    Text("Rp \(EstimationHelper.overallWeeklyCost(for: devices, demandCharges: 61_763), specifier: "%.0f")")
+                                    
+                                    Text(devices.isEmpty ? "Rp 0" : "Rp \(EstimationHelper.overallWeeklyCost(for: devices, demandCharges: 61_763), specifier: "%.0f")")
                                         .font(.system(size: 20, weight: .bold))
                                         .foregroundStyle(Color(.label))
+                                         
                                 }
                                 .padding(.vertical, 15)
                                 .padding(.horizontal, 20)
@@ -138,6 +147,17 @@ struct MainView: View {
                             .padding(.bottom, 8)
                             .padding(.top, 8)
                         ) {
+                            
+                            if (devices.isEmpty) {
+                                Text("Daftar perangkat kosong. Silakan input perangkat Anda.")
+                                    .font(.footnote)
+                                    .foregroundStyle(Color(.secondaryLabel))
+                                    .frame(maxWidth: .infinity)
+                                    .padding(EdgeInsets(top: 4, leading: 4, bottom: 4, trailing: 4))
+                                    .background(Color(.secondarySystemBackground))
+                                    .cornerRadius(12)
+                            }
+                            
                             ForEach(devices) { device in
                                 NavigationLink(destination: DeviceDetailView(device: device)) {
                                     HStack(spacing: 16) {

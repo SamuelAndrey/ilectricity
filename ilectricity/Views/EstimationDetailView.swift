@@ -38,10 +38,10 @@ struct EstimationDetailView: View {
                             
                             Spacer()
                             
-                            Text("\(EstimationHelper.monthlyEnergy(for: device), specifier: "%.2f") kWh")
+                            Text("Rp \(EstimationHelper.estimatedCost(for: device), specifier: "%.0f")")
                         }
                         
-                        Text("Rp \(EstimationHelper.estimatedCost(for: device), specifier: "%.0f")")
+                        Text("\(EstimationHelper.monthlyEnergy(for: device), specifier: "%.2f") kWh")
                     }
                    
                 }

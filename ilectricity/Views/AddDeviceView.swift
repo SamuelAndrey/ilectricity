@@ -145,7 +145,7 @@ struct AddDeviceView: View {
                                     .pickerStyle(.wheel)
                                     .frame(width: 80, height: 100)
                                     .clipped()
-                                    Text("Hari per bulan")
+                                    Text("Hari per Bulan")
                                         .foregroundColor(Color(.systemGray))
                                     
                                     

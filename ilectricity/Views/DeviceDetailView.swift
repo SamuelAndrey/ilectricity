@@ -51,7 +51,7 @@ struct DeviceDetailView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     // Header
                     HStack {
-                        Text("Perangkat")
+                        Text("Detail Perangkat")
                             .font(.title3.bold())
                             .foregroundStyle(Color(.label))
                         Spacer()
@@ -154,7 +154,7 @@ struct DeviceDetailView: View {
             .padding(.horizontal, 15)
         }
         .hideKeyboardWhenTappedAround()
-        .navigationTitle("Detail Perangkat")
+        .navigationTitle("\(name)")
         .navigationBarTitleDisplayMode(.inline)
         .alert("Perubahan Berhasil Disimpan", isPresented: $showSuccessAlert) {
             Button("OK", role: .cancel) { }
@@ -290,8 +290,9 @@ struct DeviceDetailView: View {
                 .pickerStyle(.wheel)
                 .frame(width: 80, height: 80)
                 .disabled(!isEditing)
+                .scaleEffect(0.8)
                 
-                Text("hari per bulan")
+                Text("Hari per Bulan")
                     .foregroundColor(Color(.systemGray))
             }
         }
@@ -382,18 +383,24 @@ struct DeviceDetailView: View {
             Text("\(correction.correction, specifier: "%.0f") \(correction.usageUnit == .hours ? "jam" : "menit")")
                 .font(.system(size: 16, weight: .semibold))
                 .foregroundStyle(correction.isExcess ? Color(.systemRed) : Color(.systemGreen))
+            
+            // Tombol hapus tambahan
+//            Button(role: .destructive) {
+//                correctionToDelete = correction
+//                isShowingCorrectionDeleteConfirmation = true
+//            } label: {
+//                Image(systemName: "trash")
+//                    .foregroundStyle(.red)
+//                    .padding(.leading, 8)
+//            }
         }
         .padding()
         .background(Color(.secondarySystemBackground))
         .cornerRadius(12)
-        .contextMenu {
-            Button(role: .destructive) {
+        .onTapGesture(count: 1) {
                 correctionToDelete = correction
                 isShowingCorrectionDeleteConfirmation = true
-            } label: {
-                Label("Hapus", systemImage: "trash")
             }
-        }
     }
     
     private func correctionIcon(for correction: UsageCorrection) -> some View {
