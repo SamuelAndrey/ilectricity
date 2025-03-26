@@ -7,18 +7,25 @@
 
 struct DeviceIconMapper {
     static let iconMapping: [String: String] = [
-        "ac": "air.conditioner.horizontal.fill",
-        "kipas": "fanblades",
+        "ac": "air.conditioner.horizontal",
+        "kipas": "fan.floor",
         "laptop": "laptopcomputer",
         "charger": "battery.100.bolt",
         "lampu": "lightbulb",
-        "setrika": "iron",
+        "setrika": "tshirt",
         "tv": "tv",
         "speaker": "speaker.wave.3",
         "printer": "printer",
         "rice cooker": "takeoutbag.and.cup.and.straw",
-        "kompor": "stove.fill",
-        "komputer": "desktopcomputer"
+        "kompor": "stove",
+        "komputer": "desktopcomputer",
+        "dispenser": "water.waves",
+        "kulkas": "refrigerator",
+        "cuci": "dishwasher",
+        
+        "hp": "iphone",
+        "smartphone": "iphone",
+        "iphone": "iphone",
     ]
     
     static func detectIcon(for name: String) -> String {

@@ -182,11 +182,11 @@ struct MainView: View {
                                         
                                         Spacer()
                                         
-                                        let powerLevel = min(Double(device.powerConsumption) / 1000, 1.0)
+                                        let powerLevel = EstimationHelper.monthlyEnergy(for: device)
                                         Circle()
                                             .fill(
-                                                powerLevel < 0.3 ? Color(.systemGreen) :
-                                                    powerLevel < 0.7 ? Color(.systemYellow) : Color(.systemRed)
+                                                powerLevel < 50.0 ? Color(.systemGreen) :
+                                                    powerLevel < 150.0 ? Color(.systemYellow) : Color(.systemRed)
                                             )
                                             .frame(width: 10, height: 10)
                                     }
