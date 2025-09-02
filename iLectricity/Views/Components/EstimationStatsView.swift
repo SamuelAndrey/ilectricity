@@ -12,22 +12,34 @@ struct EstimationStatsView: View {
     let icon: String
     let title: String
     let count: Int
+    let color: Color
     
     var body: some View {
-        GroupBox {
-            VStack {
-                HStack(spacing: 10) {
-                    Image(systemName: icon)
-                    Text(title)
-                }
-                Spacer()
-                Text("\(count)")
+        VStack {
+            HStack(spacing: 10) {
+                Image(systemName: icon)
+                    .foregroundColor(color)
+                
+                Text(title)
+                    .fontWeight(.bold)
+                    .foregroundColor(color)
+
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            Spacer()
+            Text("Rp \(count)")
+                .font(.headline)
+                .fontWeight(.bold)
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding()
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color(UIColor.secondarySystemGroupedBackground))
+        )
     }
 }
 
+
 #Preview {
-    EstimationStatsView(icon: "calendar", title: "Monthly", count: 10000)
+    EstimationStatsView(icon: "creditcard.fill", title: "Monthly", count: 10000, color: .green)
 }

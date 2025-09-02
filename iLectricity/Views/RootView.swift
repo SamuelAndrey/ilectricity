@@ -8,8 +8,21 @@
 import SwiftUI
 
 struct RootView: View {
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        TabView {
+            DeviceView()
+                .tabItem {
+                    Label("Devices", systemImage: "lightbulb")
+                        .foregroundColor(Color.green)
+                }
+                .tag(0)
+            
+            SettingView()
+                .tabItem { Label("Setting", systemImage: "gearshape") }
+                .tag(1)
+        }
+        .accentColor(.primary)
     }
 }
 
