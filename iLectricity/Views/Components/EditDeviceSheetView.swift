@@ -1,5 +1,5 @@
 //
-//  AddDeviceSheetView.swift
+//  EditDeviceSheetView.swift
 //  iLectricity
 //
 //  Created by Samuel Andrey Aji Prasetya on 03/09/25.
@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct AddDeviceSheetView: View {
-
+struct EditDeviceSheetView: View {
+    
     @Environment(\.dismiss) var dismiss
     
     @State private var name: String = ""
@@ -45,7 +45,6 @@ struct AddDeviceSheetView: View {
                 .pickerStyle(.segmented)
                 
                 LabeledContent("Usage Frequency") {
-                    
                     Picker("Unit", selection: $frequency) {
                         ForEach(1...30, id: \.self) { number in
                             Text("\(number)").tag(number)
@@ -83,5 +82,5 @@ struct AddDeviceSheetView: View {
 }
 
 #Preview {
-    AddDeviceSheetView()
+    EditDeviceSheetView()
 }

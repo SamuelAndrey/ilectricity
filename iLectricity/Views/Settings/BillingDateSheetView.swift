@@ -7,7 +7,8 @@
 
 import SwiftUI
 
-struct BillingDateView: View {
+struct BillingDateSheetView: View {
+    
     @Environment(\.dismiss) var dismiss
         
     @State private var name: String = ""
@@ -61,5 +62,5 @@ struct BillingDateView: View {
 }
 
 #Preview {
-    BillingDateView()
+    BillingDateSheetView()
 }

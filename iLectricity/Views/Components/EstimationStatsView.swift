@@ -13,6 +13,7 @@ struct EstimationStatsView: View {
     let title: String
     let count: Int
     let color: Color
+    let backgroundColor: Color
     
     var body: some View {
         VStack {
@@ -34,12 +35,12 @@ struct EstimationStatsView: View {
         .padding()
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(Color(UIColor.secondarySystemGroupedBackground))
+                .fill(backgroundColor)
         )
     }
 }
 
 
 #Preview {
-    EstimationStatsView(icon: "creditcard.fill", title: "Monthly", count: 10000, color: .green)
+    EstimationStatsView(icon: "creditcard.fill", title: "Monthly", count: 30000, color: .green, backgroundColor: Color(UIColor.secondarySystemGroupedBackground))
 }

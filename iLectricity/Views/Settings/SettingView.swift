@@ -8,16 +8,27 @@
 import SwiftUI
 
 struct SettingView: View {
+    
+    @State private var isPresentedTariffSheet = false
+    @State private var isPresentedBillingDateSheet = false
+    
     var body: some View {
-        
         NavigationStack {
             VStack {
                 List {
                     Section {
-                        NavigationLink {
-                            
+                        Button {
+                            isPresentedTariffSheet = true
                         } label: {
-                            Text("Rp 1.262")
+                            HStack {
+                               Text("Rp 1.262")
+                                   .foregroundColor(.primary)
+                                
+                               Spacer()
+                                
+                               Image(systemName: "chevron.right")
+                                    .foregroundColor(Color.secondary)
+                           }
 
                         }
                     } header: {
@@ -31,10 +42,19 @@ struct SettingView: View {
                     }
                     
                     Section {
-                        NavigationLink {
-                            
+                        Button {
+                            isPresentedBillingDateSheet = true
                         } label: {
-                            Text("Monthly on the 28th")
+
+                            HStack {
+                                Text("Monthly on the 28th")
+                                   .foregroundColor(.primary)
+                                
+                               Spacer()
+                                
+                               Image(systemName: "chevron.right")
+                                    .foregroundColor(Color.secondary)
+                           }
 
                         }
                     } header: {
@@ -50,6 +70,12 @@ struct SettingView: View {
                 }
             }
             .navigationTitle("Settings")
+            .sheet(isPresented: $isPresentedTariffSheet) {
+                TariffSheetView()
+            }
+            .sheet(isPresented: $isPresentedBillingDateSheet) {
+                BillingDateSheetView()
+            }
         }
     }
 }

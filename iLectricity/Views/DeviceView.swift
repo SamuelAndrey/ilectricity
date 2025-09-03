@@ -9,7 +9,8 @@ import SwiftUI
 
 struct DeviceView: View {
     
-    @State var items = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+    @State private var items = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+    @State private var isPresentedAddDeviceSheet: Bool = false
     
     var body: some View {
 
@@ -33,16 +34,15 @@ struct DeviceView: View {
                     NavigationLink {
                         
                     } label: {
-                        EstimationStatsView(icon: "creditcard.fill", title: "Monthly", count: 10000, color: .green)
-
+                        EstimationStatsView(icon: "creditcard.fill", title: "Monthly", count: 500000, color: .green, backgroundColor: .clear)
                     }
                     .padding(.horizontal)
                     .listRowInsets(EdgeInsets())
                     .listRowSeparator(.hidden)
                     
                     HStack {
-                        EstimationStatsView(icon: "creditcard.fill", title: "Weekly", count: 10000, color: .yellow)
-                        EstimationStatsView(icon: "creditcard.fill", title: "Daily", count: 10000, color: .cyan)
+                        EstimationStatsView(icon: "sun.max.fill", title: "Daily", count: 175000, color: .orange, backgroundColor: Color(UIColor.secondarySystemGroupedBackground))
+                        EstimationStatsView(icon: "calendar", title: "Weekly", count: 20000, color: .cyan, backgroundColor: Color(UIColor.secondarySystemGroupedBackground))
                     }
                     .listRowBackground(Color.clear)
                     .listRowInsets(EdgeInsets())
@@ -71,6 +71,19 @@ struct DeviceView: View {
                                             .foregroundColor(Color.secondary)
                                     }
                                 }
+                                .swipeActions(edge: .trailing) {
+                                    Button(role: .destructive) {
+                                        
+                                    } label: {
+                                        Label("Delete", systemImage: "trash")
+                                    }
+                                    Button {
+                                        
+                                    } label: {
+                                        Label("Flag", systemImage: "flag")
+                                    }
+                                    .tint(.orange)
+                                }
                             }
                             
                         }
@@ -89,16 +102,30 @@ struct DeviceView: View {
                                 .foregroundColor(Color.primary)
                                 .padding(.horizontal, 10)
                                 .padding(.vertical, 4)
-                                .background(Capsule().fill(Color(UIColor.systemBackground)))
+                                .background(Capsule().fill(Color(UIColor.secondarySystemGroupedBackground)))
                         }
                     }
                     .textCase(nil)
                 }
-                .navigationTitle("Estimation")
                 .scrollIndicators(.hidden)
                 .scrollContentBackground(.hidden)
                 .listRowSpacing(7)
                 .background(Color.clear)
+            }
+            .navigationTitle("Estimation")
+            .toolbar(content: {
+                ToolbarItem {
+                    Button {
+                        isPresentedAddDeviceSheet = true
+                    } label: {
+                        Image(systemName: "plus")
+                            .fontWeight(.bold)
+                            .foregroundColor(.green)
+                    }
+                }
+            })
+            .sheet(isPresented: $isPresentedAddDeviceSheet) {
+                AddDeviceSheetView()
             }
         }
     }
