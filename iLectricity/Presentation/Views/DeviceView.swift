@@ -9,8 +9,12 @@ import SwiftUI
 
 struct DeviceView: View {
     
-    @State private var items = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+    @Environment(\.modelContext) private var context
+    @StateObject private var deviceViewModel = DeviceViewModel()
+    
     @State private var isPresentedAddDeviceSheet: Bool = false
+    @State private var isPresentedEditDeviceSheet: Bool = false
+    @State private var selectedDevice: Device?
     
     var body: some View {
 
@@ -21,6 +25,7 @@ struct DeviceView: View {
                         colors: [
                             Color.green.opacity(0.6),
                             Color.green.opacity(0.1),
+                            Color.secondary.opacity(0.1),
                             Color.secondary.opacity(0.1),
                             Color.secondary.opacity(0.1),
                         ]
@@ -34,22 +39,43 @@ struct DeviceView: View {
                     NavigationLink {
                         
                     } label: {
-                        EstimationStatsView(icon: "creditcard.fill", title: "Monthly", count: 500000, color: .green, backgroundColor: .clear)
+                        EstimationStatsView(
+                            icon: "creditcard.fill",
+                            title: "Monthly", count: 500000,
+                            color: .green, backgroundColor: .clear,
+                            font: .title
+                        )
                     }
                     .padding(.horizontal)
                     .listRowInsets(EdgeInsets())
                     .listRowSeparator(.hidden)
                     
                     HStack {
-                        EstimationStatsView(icon: "sun.max.fill", title: "Daily", count: 175000, color: .orange, backgroundColor: Color(UIColor.secondarySystemGroupedBackground))
-                        EstimationStatsView(icon: "calendar", title: "Weekly", count: 20000, color: .cyan, backgroundColor: Color(UIColor.secondarySystemGroupedBackground))
+                        EstimationStatsView(
+                            icon: "sun.max.fill",
+                            title: "Daily",
+                            count: 175000,
+                            color: .orange,
+                            backgroundColor: Color(UIColor.secondarySystemGroupedBackground),
+                            font: .headline
+                        )
+                        
+                        EstimationStatsView(
+                            icon: "calendar",
+                            title: "Weekly",
+                            count: 20000,
+                            color: .cyan,
+                            backgroundColor: Color(UIColor.secondarySystemGroupedBackground),
+                            font: .headline
+                        )
                     }
                     .listRowBackground(Color.clear)
                     .listRowInsets(EdgeInsets())
                     .listRowSeparator(.hidden)
 
                     Section {
-                        ForEach(items, id: \.self) { item in
+                        
+                        ForEach(deviceViewModel.devices) { device in
                             NavigationLink {
                                 DeviceDetailView()
                             } label: {
@@ -59,30 +85,30 @@ struct DeviceView: View {
                                             .fill(Color(.green).opacity(0.2))
                                             .frame(width: 40, height: 40)
                                         
-                                        Image(systemName: "creditcard")
+                                        Image(systemName: "\(device.icon)")
                                             .foregroundColor(.green)
                                     }
                                     VStack(alignment: .leading) {
-                                        Text("Light \(item)")
+                                        Text("\(device.name)")
                                             .font(.headline)
                                         
-                                        Text("12 Watt • 12 Hours \(item)")
+                                        Text("\(device.power) Watt • \(device.durationPerDay) \((device.durationUnit == .hours) ? "Hours" : "Minutes")")
                                             .font(.subheadline)
                                             .foregroundColor(Color.secondary)
                                     }
                                 }
                                 .swipeActions(edge: .trailing) {
                                     Button(role: .destructive) {
-                                        
+                                        deviceViewModel.destroyDevice(context, device: device)
                                     } label: {
                                         Label("Delete", systemImage: "trash")
                                     }
                                     Button {
-                                        
+                                        selectedDevice = device
                                     } label: {
-                                        Label("Flag", systemImage: "flag")
+                                        Label("Edit", systemImage: "pencil")
                                     }
-                                    .tint(.orange)
+                                    .tint(.green)
                                 }
                             }
                             
@@ -96,7 +122,7 @@ struct DeviceView: View {
                             
                             Spacer()
                             
-                            Text("0")
+                            Text("\(deviceViewModel.devices.count)")
                                 .font(.headline)
                                 .fontWeight(.bold)
                                 .foregroundColor(Color.primary)
@@ -125,9 +151,16 @@ struct DeviceView: View {
                 }
             })
             .sheet(isPresented: $isPresentedAddDeviceSheet) {
-                AddDeviceSheetView()
+                AddDeviceSheetView(deviceViewModel: deviceViewModel)
+            }
+            .sheet(item: $selectedDevice) { device in
+                EditDeviceSheetView(device: device)
+            }
+            .onAppear {
+                deviceViewModel.loadDevices(context: context)
             }
         }
+        
     }
 }
 

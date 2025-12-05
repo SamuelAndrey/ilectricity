@@ -10,6 +10,11 @@ import SwiftData
 
 @main
 struct iLectricityApp: App {
+    
+    init() {
+        registerDefaultSettings()
+    }
+    
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             Device.self,
@@ -22,7 +27,7 @@ struct iLectricityApp: App {
         } catch {
             fatalError("Could not create ModelContainer: \(error)")
         }
-    }()
+    } ()
 
     var body: some Scene {
         WindowGroup {
@@ -30,4 +35,12 @@ struct iLectricityApp: App {
         }
         .modelContainer(sharedModelContainer)
     }
+    
+    func registerDefaultSettings() {
+        UserDefaults.standard.register(defaults: [
+            UserDefaultsKeys.tariffPerKwh: 1262,
+            UserDefaultsKeys.resetDate: 28
+        ])
+    }
+
 }

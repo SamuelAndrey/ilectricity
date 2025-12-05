@@ -9,6 +9,8 @@ import SwiftUI
 
 struct DeviceDetailView: View {
     
+    @Environment(\.dismiss) var dismiss
+    
     @State private var isPresentedAddSheet: Bool = false
     @State private var isPresentedUsageAdjustmentSheet: Bool = false
     
@@ -146,9 +148,19 @@ struct DeviceDetailView: View {
         }
         .navigationTitle("Lamp")
         .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(true)
+        .toolbar(content: {
+            ToolbarItem(placement: .topBarLeading) {
+                Button {
+                    dismiss()
+                } label: {
+                    Image(systemName: "chevron.left")
+                }
+            }
+        })
         .sheet(isPresented: $isPresentedAddSheet) {
-            EditDeviceSheetView()
-                .presentationBackground(.ultraThinMaterial)
+//            EditDeviceSheetView(device: device)
+//                .presentationBackground(.ultraThinMaterial)
 
         }
         .sheet(isPresented: $isPresentedUsageAdjustmentSheet) {

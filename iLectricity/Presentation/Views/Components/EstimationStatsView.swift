@@ -14,6 +14,7 @@ struct EstimationStatsView: View {
     let count: Int
     let color: Color
     let backgroundColor: Color
+    let font: Font
     
     var body: some View {
         VStack {
@@ -28,7 +29,7 @@ struct EstimationStatsView: View {
             }
             Spacer()
             Text("Rp \(count)")
-                .font(.headline)
+                .font(font)
                 .fontWeight(.bold)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -42,5 +43,5 @@ struct EstimationStatsView: View {
 
 
 #Preview {
-    EstimationStatsView(icon: "creditcard.fill", title: "Monthly", count: 30000, color: .green, backgroundColor: Color(UIColor.secondarySystemGroupedBackground))
+    EstimationStatsView(icon: "creditcard.fill", title: "Monthly", count: 30000, color: .green, backgroundColor: Color(UIColor.secondarySystemGroupedBackground), font: .title)
 }

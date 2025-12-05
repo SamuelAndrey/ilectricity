@@ -16,8 +16,8 @@ final class Session {
     var durationUnit: DurationUnit
     var device: Device?
     
-    init(id: UUID = UUID(), date: Date? = nil, correction: Int, durationUnit: DurationUnit) {
-        self.id = id
+    init(date: Date? = nil, correction: Int, durationUnit: DurationUnit) {
+        self.id = UUID()
         self.date = date
         self.correction = correction
         self.durationUnit = durationUnit

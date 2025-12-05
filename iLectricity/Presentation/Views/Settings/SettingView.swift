@@ -11,6 +11,8 @@ struct SettingView: View {
     
     @State private var isPresentedTariffSheet = false
     @State private var isPresentedBillingDateSheet = false
+    @State private var tariff = UserDefaults.standard.integer(forKey: UserDefaultsKeys.tariffPerKwh)
+    @State private var resetDate = UserDefaults.standard.integer(forKey: UserDefaultsKeys.resetDate)
     
     var body: some View {
         NavigationStack {
@@ -21,7 +23,7 @@ struct SettingView: View {
                             isPresentedTariffSheet = true
                         } label: {
                             HStack {
-                               Text("Rp 1.262")
+                               Text("Rp \(tariff)")
                                    .foregroundColor(.primary)
                                 
                                Spacer()
@@ -47,12 +49,12 @@ struct SettingView: View {
                         } label: {
 
                             HStack {
-                                Text("Monthly on the 28th")
+                                Text("Monthly on the \((Int(resetDate)).ordinal)")
                                    .foregroundColor(.primary)
                                 
                                Spacer()
                                 
-                               Image(systemName: "chevron.right")
+                               Image(systemName: "chevron.forward")
                                     .foregroundColor(Color.secondary)
                            }
 
@@ -65,16 +67,15 @@ struct SettingView: View {
                             
                     } footer: {
                         Text("The designated date on which the electricity bill is issued each month.")
-                    }
-                    
+                    }                    
                 }
             }
             .navigationTitle("Settings")
             .sheet(isPresented: $isPresentedTariffSheet) {
-                TariffSheetView()
+                TariffSheetView(tariffPerKWh: $tariff)
             }
             .sheet(isPresented: $isPresentedBillingDateSheet) {
-                BillingDateSheetView()
+                BillingDateSheetView(frequency: $resetDate)
             }
         }
     }

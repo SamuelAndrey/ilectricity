@@ -1,5 +1,5 @@
 //
-//  EditDeviceSheetView.swift
+//  AddDeviceSheetView.swift
 //  iLectricity
 //
 //  Created by Samuel Andrey Aji Prasetya on 03/09/25.
@@ -7,14 +7,17 @@
 
 import SwiftUI
 
-struct EditDeviceSheetView: View {
-    
+struct AddDeviceSheetView: View {
+
+    @Environment(\.modelContext) var context
     @Environment(\.dismiss) var dismiss
+    
+    var deviceViewModel: DeviceViewModel
     
     @State private var name: String = ""
     @State private var power: Int?
     @State private var durationPerDay: Int?
-    @State private var frequency: Int?
+    @State private var frequencyPerMonth: Int = 30
     @State private var durationUnit: DurationUnit = .hours
     
     var body: some View {
@@ -33,7 +36,7 @@ struct EditDeviceSheetView: View {
                 }
                 
                 LabeledContent("Daily Duration") {
-                    TextField("e.g. 2", value: $durationPerDay, format: .number)
+                    TextField("e.g. 24", value: $durationPerDay, format: .number)
                         .keyboardType(.numberPad)
                         .multilineTextAlignment(.trailing)
                 }
@@ -45,12 +48,16 @@ struct EditDeviceSheetView: View {
                 .pickerStyle(.segmented)
                 
                 LabeledContent("Usage Frequency") {
-                    Picker("Unit", selection: $frequency) {
-                        ForEach(1...30, id: \.self) { number in
-                            Text("\(number)").tag(number)
+                    HStack {
+                        Picker("Unit", selection: $frequencyPerMonth) {
+                            ForEach(1...30, id: \.self) { number in
+                                Text("\(number)").tag(number)
+                            }
                         }
+                        .pickerStyle(.wheel)
+                        
+                        Text("Days")
                     }
-                    .pickerStyle(.wheel)
                 }
             }
             .hideKeyboardWhenTappedAround()
@@ -69,12 +76,22 @@ struct EditDeviceSheetView: View {
                 
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
-                        //
+                        
+                        deviceViewModel.addDevice(
+                            context, name: name,
+                            power: power ?? 15,
+                            durationPerDay: durationPerDay ?? 24,
+                            icon: "plus",
+                            frequencyPerMonth: frequencyPerMonth,
+                            durationUnit: durationUnit
+                        )
+                        
                         dismiss()
                     } label: {
                         Text("Save")
                             .fontWeight(.bold)
                     }
+                    .disabled(name.isEmpty || power == nil || durationPerDay == nil)
                 }
             })
         }
@@ -82,5 +99,5 @@ struct EditDeviceSheetView: View {
 }
 
 #Preview {
-    EditDeviceSheetView()
+    // AddDeviceSheetView()
 }

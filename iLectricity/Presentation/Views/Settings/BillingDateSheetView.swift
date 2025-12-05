@@ -14,8 +14,8 @@ struct BillingDateSheetView: View {
     @State private var name: String = ""
     @State private var power: Int?
     @State private var durationPerDay: Int?
-    @State private var frequency: Int?
     @State private var durationUnit: DurationUnit = .hours
+    @Binding var frequency: Int
     
     var body: some View {
         NavigationStack {
@@ -49,7 +49,7 @@ struct BillingDateSheetView: View {
                 
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
-                        //
+                        UserDefaults.standard.set(frequency, forKey: UserDefaultsKeys.resetDate)
                         dismiss()
                     } label: {
                         Text("Save")
@@ -62,5 +62,5 @@ struct BillingDateSheetView: View {
 }
 
 #Preview {
-    BillingDateSheetView()
+    BillingDateSheetView(frequency: .constant(28))
 }

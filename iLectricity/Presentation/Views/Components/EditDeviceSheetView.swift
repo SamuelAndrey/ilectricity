@@ -1,5 +1,5 @@
 //
-//  AddDeviceSheetView.swift
+//  EditDeviceSheetView.swift
 //  iLectricity
 //
 //  Created by Samuel Andrey Aji Prasetya on 03/09/25.
@@ -7,15 +7,30 @@
 
 import SwiftUI
 
-struct AddDeviceSheetView: View {
-
-    @Environment(\.dismiss) var dismiss
+struct EditDeviceSheetView: View {
     
-    @State private var name: String = ""
-    @State private var power: Int?
-    @State private var durationPerDay: Int?
-    @State private var frequency: Int?
-    @State private var durationUnit: DurationUnit = .hours
+    @Environment(\.dismiss) var dismiss
+    @Environment(\.modelContext) var context
+
+    @State private var name: String
+    @State private var power: Int
+    @State private var durationPerDay: Int
+    @State private var frequencyPerMonth: Int
+    @State private var durationUnit: DurationUnit
+    
+    private var device: Device
+    
+    init(device: Device) {
+        
+        self.device = device
+        // self.deviceViewModel = deviceViewModel
+        
+        _name = State(initialValue: device.name)
+        _power = State(initialValue: device.power)
+        _durationPerDay = State(initialValue: device.durationPerDay)
+        _frequencyPerMonth = State(initialValue: device.frequencyPerMonth)
+        _durationUnit = State(initialValue: device.durationUnit)
+    }
     
     var body: some View {
         NavigationStack {
@@ -45,8 +60,7 @@ struct AddDeviceSheetView: View {
                 .pickerStyle(.segmented)
                 
                 LabeledContent("Usage Frequency") {
-                    
-                    Picker("Unit", selection: $frequency) {
+                    Picker("Unit", selection: $frequencyPerMonth) {
                         ForEach(1...30, id: \.self) { number in
                             Text("\(number)").tag(number)
                         }
@@ -57,7 +71,7 @@ struct AddDeviceSheetView: View {
             .hideKeyboardWhenTappedAround()
             .scrollIndicators(.hidden)
             .scrollContentBackground(.hidden)
-            .navigationTitle("Add New Device")
+            .navigationTitle("Edit Device")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar(content: {
                 ToolbarItem(placement: .topBarLeading) {
@@ -70,7 +84,7 @@ struct AddDeviceSheetView: View {
                 
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
-                        //
+                        saveChanges()
                         dismiss()
                     } label: {
                         Text("Save")
@@ -80,8 +94,18 @@ struct AddDeviceSheetView: View {
             })
         }
     }
+    
+    private func saveChanges() {
+        device.name = name
+        device.power = power
+        device.durationPerDay = durationPerDay
+        device.frequencyPerMonth = frequencyPerMonth
+        device.durationUnit = durationUnit
+        
+        try? context.save()
+    }
 }
 
-#Preview {
-    AddDeviceSheetView()
-}
+//#Preview {
+//    EditDeviceSheetView()
+//}

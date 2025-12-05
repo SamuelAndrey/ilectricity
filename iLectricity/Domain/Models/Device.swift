@@ -5,8 +5,8 @@
 //  Created by Samuel Andrey Aji Prasetya on 31/08/25.
 //
 
-import SwiftData
 import Foundation
+import SwiftData
 
 @Model
 final class Device {
@@ -21,7 +21,7 @@ final class Device {
     @Relationship(deleteRule: .cascade)
     var sessions: [Session] = []
     
-    init(id: UUID = UUID(),
+    init(
          name: String = "",
          power: Int,
          durationPerDay: Int,
@@ -29,7 +29,7 @@ final class Device {
          frequencyPerMonth: Int,
          durationUnit: DurationUnit
     ) {
-        self.id = id
+        self.id = UUID()
         self.name = name
         self.power = power
         self.icon = icon

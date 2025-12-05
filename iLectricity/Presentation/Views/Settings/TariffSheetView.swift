@@ -10,8 +10,7 @@ import SwiftUI
 struct TariffSheetView: View {
     
     @Environment(\.dismiss) var dismiss
-    
-    @State private var tariffPerKWh: Int?
+    @Binding var tariffPerKWh: Int
     
     var body: some View {
         NavigationStack {
@@ -39,7 +38,7 @@ struct TariffSheetView: View {
                 
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
-                        //
+                        UserDefaults.standard.set(tariffPerKWh, forKey: UserDefaultsKeys.tariffPerKwh)
                         dismiss()
                     } label: {
                         Text("Save")
@@ -52,5 +51,5 @@ struct TariffSheetView: View {
 }
 
 #Preview {
-    TariffSheetView()
+    TariffSheetView(tariffPerKWh: .constant(2000))
 }
