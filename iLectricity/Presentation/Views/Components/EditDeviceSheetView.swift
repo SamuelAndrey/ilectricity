@@ -76,6 +76,14 @@ struct EditDeviceSheetView: View {
             .hideKeyboardWhenTappedAround()
             .scrollIndicators(.hidden)
             .scrollContentBackground(.hidden)
+            .onChange(of: durationPerDay) { _, newValue in
+                let max = durationUnit == .hours ? 24 : 1440
+                if newValue > max { durationPerDay = max }
+            }
+            .onChange(of: durationUnit) { _, _ in
+                let max = durationUnit == .hours ? 24 : 1440
+                if durationPerDay > max { durationPerDay = max }
+            }
             .navigationTitle("Edit Device")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar(content: {

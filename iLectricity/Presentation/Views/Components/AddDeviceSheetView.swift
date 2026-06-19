@@ -67,6 +67,16 @@ struct AddDeviceSheetView: View {
             .hideKeyboardWhenTappedAround()
             .scrollIndicators(.hidden)
             .scrollContentBackground(.hidden)
+            .onChange(of: durationPerDay) { _, newValue in
+                guard let value = newValue else { return }
+                let max = durationUnit == .hours ? 24 : 1440
+                if value > max { durationPerDay = max }
+            }
+            .onChange(of: durationUnit) { _, _ in
+                guard let value = durationPerDay else { return }
+                let max = durationUnit == .hours ? 24 : 1440
+                if value > max { durationPerDay = max }
+            }
             .navigationTitle("Add New Device")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar(content: {

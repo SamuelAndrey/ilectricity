@@ -40,6 +40,8 @@ struct DeviceView: View {
                             Image(systemName: "plus")
                                 .fontWeight(.bold)
                                 .foregroundColor(.green)
+                                .padding(12)
+                                .contentShape(Rectangle())
                         }
                     }
                 }

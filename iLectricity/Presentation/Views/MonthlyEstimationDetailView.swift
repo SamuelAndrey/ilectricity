@@ -163,6 +163,9 @@ struct MonthlyEstimationDetailView: View {
                     dismiss()
                 } label: {
                     Image(systemName: "chevron.left")
+                        .fontWeight(.medium)
+                        .padding(12)
+                        .contentShape(Rectangle())
                 }
             }
         })
