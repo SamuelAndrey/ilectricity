@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct EditDeviceSheetView: View {
-    
+
     @Environment(\.dismiss) var dismiss
     @Environment(\.modelContext) var context
 
@@ -17,48 +17,53 @@ struct EditDeviceSheetView: View {
     @State private var durationPerDay: Int
     @State private var frequencyPerMonth: Int
     @State private var durationUnit: DurationUnit
-    
+
     private var device: Device
-    
-    init(device: Device) {
-        
+    var deviceViewModel: DeviceViewModel?
+
+    private var detectedIcon: String {
+        IconMapper.icon(for: name)
+    }
+
+    init(device: Device, deviceViewModel: DeviceViewModel? = nil) {
+
         self.device = device
-        // self.deviceViewModel = deviceViewModel
-        
+        self.deviceViewModel = deviceViewModel
+
         _name = State(initialValue: device.name)
         _power = State(initialValue: device.power)
         _durationPerDay = State(initialValue: device.durationPerDay)
         _frequencyPerMonth = State(initialValue: device.frequencyPerMonth)
         _durationUnit = State(initialValue: device.durationUnit)
     }
-    
+
     var body: some View {
         NavigationStack {
             Form {
-                
+
                 LabeledContent("Device Name") {
                     TextField("e.g. Air Conditioner", text: $name)
                         .multilineTextAlignment(.trailing)
                 }
-                
+
                 LabeledContent("Power (Watt)") {
                     TextField("e.g. 450", value: $power, format: .number)
                         .keyboardType(.numberPad)
                         .multilineTextAlignment(.trailing)
                 }
-                
+
                 LabeledContent("Daily Duration") {
                     TextField("e.g. 2", value: $durationPerDay, format: .number)
                         .keyboardType(.numberPad)
                         .multilineTextAlignment(.trailing)
                 }
-                
+
                 Picker("Unit", selection: $durationUnit) {
                     Text("Hours").tag(DurationUnit.hours)
                     Text("Minutes").tag(DurationUnit.minutes)
                 }
                 .pickerStyle(.segmented)
-                
+
                 LabeledContent("Usage Frequency") {
                     Picker("Unit", selection: $frequencyPerMonth) {
                         ForEach(1...30, id: \.self) { number in
@@ -81,7 +86,7 @@ struct EditDeviceSheetView: View {
                         Text("Cancel")
                     }
                 }
-                
+
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         saveChanges()
@@ -94,18 +99,19 @@ struct EditDeviceSheetView: View {
             })
         }
     }
-    
+
     private func saveChanges() {
         device.name = name
         device.power = power
         device.durationPerDay = durationPerDay
         device.frequencyPerMonth = frequencyPerMonth
         device.durationUnit = durationUnit
-        
-        try? context.save()
+        device.icon = detectedIcon
+
+        if let deviceViewModel {
+            deviceViewModel.updateDevice(context, device: device)
+        } else {
+            try? context.save()
+        }
     }
 }
-
-//#Preview {
-//    EditDeviceSheetView()
-//}

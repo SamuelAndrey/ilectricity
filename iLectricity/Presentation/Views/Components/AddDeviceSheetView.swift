@@ -11,42 +11,46 @@ struct AddDeviceSheetView: View {
 
     @Environment(\.modelContext) var context
     @Environment(\.dismiss) var dismiss
-    
+
     var deviceViewModel: DeviceViewModel
-    
+
     @State private var name: String = ""
     @State private var power: Int?
     @State private var durationPerDay: Int?
     @State private var frequencyPerMonth: Int = 30
     @State private var durationUnit: DurationUnit = .hours
-    
+
+    private var detectedIcon: String {
+        IconMapper.icon(for: name)
+    }
+
     var body: some View {
         NavigationStack {
             Form {
-                
+
                 LabeledContent("Device Name") {
                     TextField("e.g. Air Conditioner", text: $name)
                         .multilineTextAlignment(.trailing)
                 }
-                
+
                 LabeledContent("Power (Watt)") {
                     TextField("e.g. 450", value: $power, format: .number)
                         .keyboardType(.numberPad)
                         .multilineTextAlignment(.trailing)
                 }
-                
+
                 LabeledContent("Daily Duration") {
                     TextField("e.g. 24", value: $durationPerDay, format: .number)
                         .keyboardType(.numberPad)
                         .multilineTextAlignment(.trailing)
                 }
-                
+
                 Picker("Unit", selection: $durationUnit) {
                     Text("Hours").tag(DurationUnit.hours)
                     Text("Minutes").tag(DurationUnit.minutes)
                 }
                 .pickerStyle(.segmented)
-                
+
                 LabeledContent("Usage Frequency") {
                     HStack {
                         Picker("Unit", selection: $frequencyPerMonth) {
@@ -55,7 +59,7 @@ struct AddDeviceSheetView: View {
                             }
                         }
                         .pickerStyle(.wheel)
-                        
+
                         Text("Days")
                     }
                 }
@@ -73,19 +77,19 @@ struct AddDeviceSheetView: View {
                         Text("Cancel")
                     }
                 }
-                
+
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
-                        
+
                         deviceViewModel.addDevice(
                             context, name: name,
                             power: power ?? 15,
                             durationPerDay: durationPerDay ?? 24,
-                            icon: "plus",
+                            icon: detectedIcon,
                             frequencyPerMonth: frequencyPerMonth,
                             durationUnit: durationUnit
                         )
-                        
+
                         dismiss()
                     } label: {
                         Text("Save")
@@ -96,8 +100,4 @@ struct AddDeviceSheetView: View {
             })
         }
     }
-}
-
-#Preview {
-    // AddDeviceSheetView()
 }

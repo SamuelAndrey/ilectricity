@@ -37,11 +37,11 @@ struct DeviceView: View {
                 List {
                     
                     NavigationLink {
-                        
+                        MonthlyEstimationDetailView(deviceViewModel: deviceViewModel)
                     } label: {
                         EstimationStatsView(
                             icon: "creditcard.fill",
-                            title: "Monthly", count: 500000,
+                            title: "Monthly", count: deviceViewModel.monthlyEstimate,
                             color: .green, backgroundColor: .clear,
                             font: .title
                         )
@@ -54,7 +54,7 @@ struct DeviceView: View {
                         EstimationStatsView(
                             icon: "sun.max.fill",
                             title: "Daily",
-                            count: 175000,
+                            count: deviceViewModel.dailyEstimate,
                             color: .orange,
                             backgroundColor: Color(UIColor.secondarySystemGroupedBackground),
                             font: .headline
@@ -63,7 +63,7 @@ struct DeviceView: View {
                         EstimationStatsView(
                             icon: "calendar",
                             title: "Weekly",
-                            count: 20000,
+                            count: deviceViewModel.weeklyEstimate,
                             color: .cyan,
                             backgroundColor: Color(UIColor.secondarySystemGroupedBackground),
                             font: .headline
@@ -77,7 +77,7 @@ struct DeviceView: View {
                         
                         ForEach(deviceViewModel.devices) { device in
                             NavigationLink {
-                                DeviceDetailView()
+                                DeviceDetailView(device: device)
                             } label: {
                                 HStack {
                                     ZStack {
@@ -154,7 +154,8 @@ struct DeviceView: View {
                 AddDeviceSheetView(deviceViewModel: deviceViewModel)
             }
             .sheet(item: $selectedDevice) { device in
-                EditDeviceSheetView(device: device)
+                EditDeviceSheetView(device: device, deviceViewModel: deviceViewModel)
+                    .presentationBackground(.ultraThinMaterial)
             }
             .onAppear {
                 deviceViewModel.loadDevices(context: context)

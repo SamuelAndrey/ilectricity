@@ -10,11 +10,7 @@ import SwiftUI
 struct BillingDateSheetView: View {
     
     @Environment(\.dismiss) var dismiss
-        
-    @State private var name: String = ""
-    @State private var power: Int?
-    @State private var durationPerDay: Int?
-    @State private var durationUnit: DurationUnit = .hours
+
     @Binding var frequency: Int
     
     var body: some View {
