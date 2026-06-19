@@ -10,11 +10,13 @@ import SwiftData
 
 @main
 struct iLectricityApp: App {
-    
+
+    @AppStorage(UserDefaultsKeys.hasCompletedOnboarding) private var hasCompletedOnboarding = false
+
     init() {
         registerDefaultSettings()
     }
-    
+
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             Device.self,
@@ -31,11 +33,15 @@ struct iLectricityApp: App {
 
     var body: some Scene {
         WindowGroup {
-            RootView()
+            if hasCompletedOnboarding {
+                RootView()
+            } else {
+                OnboardingView()
+            }
         }
         .modelContainer(sharedModelContainer)
     }
-    
+
     func registerDefaultSettings() {
         UserDefaults.standard.register(defaults: [
             UserDefaultsKeys.tariffPerKwh: 1262,

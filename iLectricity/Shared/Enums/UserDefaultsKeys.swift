@@ -8,4 +8,5 @@
 enum UserDefaultsKeys {
     static let tariffPerKwh = "tariffPerKwh"
     static let resetDate = "resetDate"
+    static let hasCompletedOnboarding = "hasCompletedOnboarding"
 }
